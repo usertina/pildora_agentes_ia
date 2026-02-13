@@ -921,6 +921,155 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
             </div>
         </section>
 
+        <!-- Regla 5: Comparativa Agentes vs Chatbots -->
+        <section class="rule-card" data-level="beginner">
+            <div class="rule-header">
+                <span class="rule-number">5</span>
+                <h3>🤖 Agentes vs Chatbots: ¿Cuál necesitas?</h3>
+                <span class="level-tag beginner">Principiante</span>
+            </div>
+            <div class="rule-content">
+                <div class="analogy">
+                    <h4>Imagina esto:</h4>
+                    <p>
+                        Un <strong>chatbot</strong> es como un <strong>recepcionista</strong> que responde preguntas 
+                        de un manual predefinido. Si no está en el manual, no puede ayudarte.
+                    </p>
+                    <p>
+                        Un <strong>agente de IA</strong> es como un <strong>asistente personal</strong> que puede 
+                        pensar, tomar decisiones, usar herramientas y aprender de la experiencia.
+                    </p>
+                </div>
+
+                <div class="comparison-section">
+                    <h4>📊 Comparativa completa</h4>
+                    
+                    <div class="comparison-table">
+                        <div class="comparison-header">
+                            <div class="comparison-cell feature">Característica</div>
+                            <div class="comparison-cell chatbot">💬 Chatbot Tradicional</div>
+                            <div class="comparison-cell agent">🤖 Agente de IA</div>
+                        </div>
+                        
+                        <div class="comparison-row">
+                            <div class="comparison-cell feature">Inteligencia</div>
+                            <div class="comparison-cell chatbot">Reglas predefinidas</div>
+                            <div class="comparison-cell agent">Razonamiento autónomo</div>
+                        </div>
+                        
+                        <div class="comparison-row">
+                            <div class="comparison-cell feature">Memoria</div>
+                            <div class="comparison-cell chatbot">Contexto limitado</div>
+                            <div class="comparison-cell agent">Memoria a largo plazo</div>
+                        </div>
+                        
+                        <div class="comparison-row">
+                            <div class="comparison-cell feature">Herramientas</div>
+                            <div class="comparison-cell chatbot">Solo texto</div>
+                            <div class="comparison-cell agent">APIs, archivos, buscadores...</div>
+                        </div>
+                        
+                        <div class="comparison-row">
+                            <div class="comparison-cell feature">Acciones</div>
+                            <div class="comparison-cell chatbot">Responder preguntas</div>
+                            <div class="comparison-cell agent">Ejecutar tareas completas</div>
+                        </div>
+                        
+                        <div class="comparison-row">
+                            <div class="comparison-cell feature">Aprendizaje</div>
+                            <div class="comparison-cell chatbot">No aprende</div>
+                            <div class="comparison-cell agent">Aprende del contexto</div>
+                        </div>
+                        
+                        <div class="comparison-row">
+                            <div class="comparison-cell feature">Complejidad</div>
+                            <div class="comparison-cell chatbot">Simple y predecible</div>
+                            <div class="comparison-cell agent">Complejo y adaptable</div>
+                        </div>
+                        
+                        <div class="comparison-row">
+                            <div class="comparison-cell feature">Coste</div>
+                            <div class="comparison-cell chatbot">💰 Bajo</div>
+                            <div class="comparison-cell agent">💰💰💰 Alto</div>
+                        </div>
+                        
+                        <div class="comparison-row">
+                            <div class="comparison-cell feature">Ejemplo</div>
+                            <div class="comparison-cell chatbot">FAQ de un sitio web</div>
+                            <div class="comparison-cell agent">Asistente que gestiona emails, tareas y búsquedas</div>
+                        </div>
+                    </div>
+
+                    <div class="use-case-examples">
+                        <h5>🎯 ¿Cuándo usar cada uno?</h5>
+                        
+                        <div class="use-case-card chatbot">
+                            <h6>💬 Usa un CHATBOT si:</h6>
+                            <ul>
+                                <li>Quieres responder preguntas frecuentes (FAQ)</li>
+                                <li>Necesitas información estática (horarios, precios)</li>
+                                <li>Tienes un presupuesto limitado</li>
+                                <li>El contexto es simple y predecible</li>
+                                <li>Ejemplo: Chatbot de atención al cliente básico</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="use-case-card agent">
+                            <h6>🤖 Usa un AGENTE si:</h6>
+                            <ul>
+                                <li>Necesitas automatizar tareas complejas</li>
+                                <li>El agente debe tomar decisiones autónomas</li>
+                                <li>Necesitas integración con múltiples herramientas</li>
+                                <li>El contexto cambia y necesitas memoria</li>
+                                <li>Ejemplo: Tu aplicación QUBIZ que gestiona emails, tareas y búsquedas</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="decision-tree">
+                        <h5>🌳 Árbol de decisión</h5>
+                        <div class="tree-node">
+                            <div class="tree-question">¿Necesito automatizar tareas?</div>
+                            <div class="tree-branches">
+                                <div class="tree-branch no">
+                                    <div class="tree-answer">→ 💬 Chatbot</div>
+                                </div>
+                                <div class="tree-branch yes">
+                                    <div class="tree-question">¿Necesito memoria y contexto?</div>
+                                    <div class="tree-branches">
+                                        <div class="tree-branch no">
+                                            <div class="tree-answer">→ 💬 Chatbot avanzado</div>
+                                        </div>
+                                        <div class="tree-branch yes">
+                                            <div class="tree-question">¿Necesito usar herramientas externas?</div>
+                                            <div class="tree-branches">
+                                                <div class="tree-branch no">
+                                                    <div class="tree-answer">→ 💬 Chatbot con RAG</div>
+                                                </div>
+                                                <div class="tree-branch yes">
+                                                    <div class="tree-answer">→ 🤖 Agente de IA</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="takeaway">
+                    <h4>🔑 Lo que debes recordar:</h4>
+                    <ul>
+                        <li><strong>No siempre necesitas un agente:</strong> Un chatbot puede ser suficiente para casos simples</li>
+                        <li><strong>Los agentes son más potentes pero más complejos:</strong> Evalúa si realmente los necesitas</li>
+                        <li><strong>Coste vs beneficio:</strong> Un chatbot cuesta menos pero hace menos</li>
+                        <li><strong>Tu QUBIZ justifica un agente:</strong> Porque integra múltiples herramientas y necesita memoria</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
         <!-- Checklist Final -->
         <section class="checklist-section">
             <h2>✅ Checklist para crear tu Agente de IA</h2>
@@ -958,6 +1107,185 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
                 <div class="checklist-item">
                     <input type="checkbox" id="check8">
                     <label for="check8">Considera un sistema multi-agente si es complejo</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Regla 6: Crea tu primer agente -->
+        <section class="rule-card" data-level="beginner">
+            <div class="rule-header">
+                <span class="rule-number">6</span>
+                <h3>🚀 Crea tu primer agente (¡Interactivo!)</h3>
+                <span class="level-tag beginner">Principiante</span>
+            </div>
+            <div class="rule-content">
+                <div class="analogy">
+                    <h4>Imagina esto:</h4>
+                    <p>
+                        Crear un agente de IA es como <strong>contratar a un nuevo empleado</strong>. 
+                        Le das un nombre, defines su personalidad, le enseñas sus herramientas, 
+                        ¡y listo para trabajar!
+                    </p>
+                    <p>
+                        Aquí puedes crear tu primer agente y ver el código generado automáticamente.
+                    </p>
+                </div>
+
+                <div class="agent-builder-section">
+                    <h4>🔧 Configura tu agente</h4>
+                    
+                    <div class="agent-builder-form">
+                        <div class="form-group">
+                            <label for="agentName">Nombre del agente</label>
+                            <input type="text" id="agentName" placeholder="Ej: AsistenteEmail, TaskMaster, CodeHelper" value="MiAgenteIA">
+                            <div class="form-hint">Elige un nombre descriptivo para tu agente</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Personalidad del agente</label>
+                            <div class="personality-selector">
+                                <div class="personality-option" data-value="formal">
+                                    <input type="radio" id="formal" name="personality" value="formal" checked>
+                                    <label for="formal">
+                                        <span class="personality-icon">👔</span>
+                                        <span class="personality-name">Formal</span>
+                                        <span class="personality-desc">Profesional, preciso, técnico</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="personality-option" data-value="casual">
+                                    <input type="radio" id="casual" name="personality" value="casual">
+                                    <label for="casual">
+                                        <span class="personality-icon">😎</span>
+                                        <span class="personality-name">Casual</span>
+                                        <span class="personality-desc">Amigable, relajado, cercano</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="personality-option" data-value="technical">
+                                    <input type="radio" id="technical" name="personality" value="technical">
+                                    <label for="technical">
+                                        <span class="personality-icon">🔬</span>
+                                        <span class="personality-name">Técnico</span>
+                                        <span class="personality-desc">Detallado, preciso, con código</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="personality-option" data-value="creative">
+                                    <input type="radio" id="creative" name="personality" value="creative">
+                                    <label for="creative">
+                                        <span class="personality-icon">🎨</span>
+                                        <span class="personality-name">Creativo</span>
+                                        <span class="personality-desc">Innovador, imaginativo, único</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Herramientas disponibles</label>
+                            <div class="tools-checkbox-grid">
+                                <div class="tool-checkbox">
+                                    <input type="checkbox" id="toolEmail" checked>
+                                    <label for="toolEmail">
+                                        <span class="tool-icon">📧</span>
+                                        <span class="tool-name">Enviar emails</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="tool-checkbox">
+                                    <input type="checkbox" id="toolSearch" checked>
+                                    <label for="toolSearch">
+                                        <span class="tool-icon">🔍</span>
+                                        <span class="tool-name">Buscar en web</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="tool-checkbox">
+                                    <input type="checkbox" id="toolFiles">
+                                    <label for="toolFiles">
+                                        <span class="tool-icon">📁</span>
+                                        <span class="tool-name">Gestionar archivos</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="tool-checkbox">
+                                    <input type="checkbox" id="toolCalendar">
+                                    <label for="toolCalendar">
+                                        <span class="tool-icon">📅</span>
+                                        <span class="tool-name">Calendario</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="tool-checkbox">
+                                    <input type="checkbox" id="toolApi">
+                                    <label for="toolApi">
+                                        <span class="tool-icon">🔌</span>
+                                        <span class="tool-name">APIs externas</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="tool-checkbox">
+                                    <input type="checkbox" id="toolDb">
+                                    <label for="toolDb">
+                                        <span class="tool-icon">🗄️</span>
+                                        <span class="tool-name">Base de datos</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="agentPurpose">Propósito del agente</label>
+                            <textarea id="agentPurpose" rows="3" placeholder="Describe qué hará tu agente. Ej: 'Gestionar emails importantes, buscar información relevante y crear tareas en ClickUp'">Gestionar emails importantes y buscar información relevante</textarea>
+                            <div class="form-hint">Sé específico sobre lo que debe hacer tu agente</div>
+                        </div>
+                        
+                        <button class="btn" id="generateAgentBtn">✨ Generar código de mi agente</button>
+                    </div>
+
+                    <div class="generated-code-section" id="generatedCodeSection" style="display: none;">
+                        <h5>Código generado para tu agente:</h5>
+                        <div class="code-tabs">
+                            <button class="code-tab-btn active" data-lang="python">Python (LangChain)</button>
+                            <button class="code-tab-btn" data-lang="javascript">JavaScript</button>
+                        </div>
+                        <div class="code-display-container">
+                            <pre id="generatedCode"><code># El código aparecerá aquí...</code></pre>
+                        </div>
+                        <button class="btn-small" id="copyCodeBtn">📋 Copiar código</button>
+                        <button class="btn-small" id="downloadCodeBtn">📥 Descargar como archivo</button>
+                    </div>
+
+                    <div class="agent-preview">
+                        <h5>Vista previa de tu agente:</h5>
+                        <div class="agent-preview-card" id="agentPreviewCard">
+                            <div class="preview-header">
+                                <div class="preview-avatar">🤖</div>
+                                <div class="preview-name" id="previewName">MiAgenteIA</div>
+                            </div>
+                            <div class="preview-personality" id="previewPersonality">
+                                <span class="personality-badge formal">👔 Formal</span>
+                            </div>
+                            <div class="preview-purpose" id="previewPurpose">
+                                Gestionar emails importantes y buscar información relevante
+                            </div>
+                            <div class="preview-tools" id="previewTools">
+                                <span class="tool-badge">📧 Email</span>
+                                <span class="tool-badge">🔍 Búsqueda</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="takeaway">
+                    <h4>🔑 Lo que debes recordar:</h4>
+                    <ul>
+                        <li><strong>Empieza simple:</strong> Crea un agente con 2-3 herramientas y luego escala</li>
+                        <li><strong>Define bien la personalidad:</strong> Afecta cómo responde el agente</li>
+                        <li><strong>Sé específico con el propósito:</strong> Cuanto más claro, mejor funcionará</li>
+                        <li><strong>Prueba y ajusta:</strong> El primer intento rara vez es perfecto</li>
+                    </ul>
                 </div>
             </div>
         </section>

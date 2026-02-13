@@ -192,3 +192,429 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🤖 Píldora de Agentes de IA cargada correctamente');
     console.log('💡 Prueba las demos interactivas para entender mejor cada concepto');
 });
+// ===== COMPARISON SECTION =====
+// No necesita JavaScript adicional, es estático
+
+// ===== AGENT BUILDER INTERACTIVO =====
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // Actualizar vista previa del nombre
+    const agentNameInput = document.getElementById('agentName');
+    const previewName = document.getElementById('previewName');
+    
+    if (agentNameInput && previewName) {
+        agentNameInput.addEventListener('input', () => {
+            previewName.textContent = agentNameInput.value || 'MiAgenteIA';
+        });
+    }
+    
+    // Actualizar vista previa de personalidad
+    const personalityOptions = document.querySelectorAll('.personality-option');
+    const previewPersonality = document.getElementById('previewPersonality');
+    
+    personalityOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Quitar clase active de todos
+            personalityOptions.forEach(opt => opt.classList.remove('active'));
+            // Añadir a este
+            option.classList.add('active');
+            
+            // Actualizar vista previa
+            const personalityValue = option.getAttribute('data-value');
+            const personalityText = option.querySelector('.personality-name').textContent;
+            const personalityIcon = option.querySelector('.personality-icon').textContent;
+            
+            previewPersonality.innerHTML = `
+                <span class="personality-badge ${personalityValue}">
+                    ${personalityIcon} ${personalityText}
+                </span>
+            `;
+        });
+    });
+    
+    // Actualizar vista previa de propósito
+    const agentPurposeInput = document.getElementById('agentPurpose');
+    const previewPurpose = document.getElementById('previewPurpose');
+    
+    if (agentPurposeInput && previewPurpose) {
+        agentPurposeInput.addEventListener('input', () => {
+            previewPurpose.textContent = agentPurposeInput.value || 'Sin propósito definido';
+        });
+    }
+    
+    // Actualizar vista previa de herramientas
+    const toolCheckboxes = document.querySelectorAll('.tool-checkbox input[type="checkbox"]');
+    const previewTools = document.getElementById('previewTools');
+    
+    toolCheckboxes.forEach(checkbox => {
+        const toolCheckbox = checkbox.closest('.tool-checkbox');
+        toolCheckbox.addEventListener('click', (e) => {
+            if (e.target !== checkbox) {
+                checkbox.checked = !checkbox.checked;
+            }
+            
+            if (checkbox.checked) {
+                toolCheckbox.classList.add('checked');
+            } else {
+                toolCheckbox.classList.remove('checked');
+            }
+            
+            updatePreviewTools();
+        });
+        
+        checkbox.addEventListener('change', updatePreviewTools);
+    });
+    
+    function updatePreviewTools() {
+        const selectedTools = [];
+        toolCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const toolName = checkbox.nextElementSibling.querySelector('.tool-name').textContent;
+                const toolIcon = checkbox.nextElementSibling.querySelector('.tool-icon').textContent;
+                selectedTools.push({ icon: toolIcon, name: toolName });
+            }
+        });
+        
+        if (selectedTools.length === 0) {
+            previewTools.innerHTML = '<span class="tool-badge">❌ Sin herramientas</span>';
+        } else {
+            previewTools.innerHTML = selectedTools.map(tool => 
+                `<span class="tool-badge">${tool.icon} ${tool.name}</span>`
+            ).join('');
+        }
+    }
+    
+    // Generar código del agente
+    const generateAgentBtn = document.getElementById('generateAgentBtn');
+    const generatedCodeSection = document.getElementById('generatedCodeSection');
+    const generatedCode = document.getElementById('generatedCode');
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const downloadCodeBtn = document.getElementById('downloadCodeBtn');
+    
+    if (generateAgentBtn) {
+        generateAgentBtn.addEventListener('click', () => {
+            const agentName = document.getElementById('agentName').value.trim() || 'MiAgenteIA';
+            const personality = document.querySelector('input[name="personality"]:checked').value;
+            const purpose = document.getElementById('agentPurpose').value.trim() || 'Sin propósito definido';
+            
+            // Obtener herramientas seleccionadas
+            const tools = [];
+            document.querySelectorAll('.tool-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
+                const toolName = checkbox.nextElementSibling.querySelector('.tool-name').textContent;
+                tools.push(toolName);
+            });
+            
+            // Generar código Python
+            const pythonCode = generatePythonCode(agentName, personality, purpose, tools);
+            
+            // Mostrar sección de código
+            generatedCodeSection.style.display = 'block';
+            generatedCode.innerHTML = `<code>${pythonCode}</code>`;
+            
+            // Scroll suave a la sección de código
+            generatedCodeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            showAlert(`✅ ¡Código generado para ${agentName}!`, 'success');
+        });
+    }
+    
+    // Tabs de código (Python/JavaScript)
+    document.querySelectorAll('.code-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.code-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const lang = btn.getAttribute('data-lang');
+            const agentName = document.getElementById('agentName').value.trim() || 'MiAgenteIA';
+            const personality = document.querySelector('input[name="personality"]:checked').value;
+            const purpose = document.getElementById('agentPurpose').value.trim() || 'Sin propósito definido';
+            
+            const tools = [];
+            document.querySelectorAll('.tool-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
+                const toolName = checkbox.nextElementSibling.querySelector('.tool-name').textContent;
+                tools.push(toolName);
+            });
+            
+            let code = '';
+            if (lang === 'python') {
+                code = generatePythonCode(agentName, personality, purpose, tools);
+            } else {
+                code = generateJavaScriptCode(agentName, personality, purpose, tools);
+            }
+            
+            generatedCode.innerHTML = `<code>${code}</code>`;
+        });
+    });
+    
+    // Copiar código
+    if (copyCodeBtn) {
+        copyCodeBtn.addEventListener('click', () => {
+            const codeText = generatedCode.querySelector('code').textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalText = copyCodeBtn.textContent;
+                copyCodeBtn.textContent = '✓ ¡Copiado!';
+                copyCodeBtn.style.background = 'var(--color-success)';
+                
+                setTimeout(() => {
+                    copyCodeBtn.textContent = originalText;
+                    copyCodeBtn.style.background = '';
+                }, 2000);
+            });
+        });
+    }
+    
+    // Descargar código
+    if (downloadCodeBtn) {
+        downloadCodeBtn.addEventListener('click', () => {
+            const agentName = document.getElementById('agentName').value.trim() || 'MiAgenteIA';
+            const codeText = generatedCode.querySelector('code').textContent;
+            const lang = document.querySelector('.code-tab-btn.active').getAttribute('data-lang');
+            
+            const blob = new Blob([codeText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${agentName}.${lang === 'python' ? 'py' : 'js'}`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showAlert('📥 Código descargado', 'success');
+        });
+    }
+});
+
+// Función para generar código Python
+function generatePythonCode(agentName, personality, purpose, tools) {
+    const personalityPrompts = {
+        formal: 'Eres un asistente profesional y formal. Responde de manera precisa y técnica.',
+        casual: 'Eres un asistente amigable y casual. Responde de manera relajada y cercana.',
+        technical: 'Eres un asistente técnico experto. Responde con detalle y precisión, incluyendo código cuando sea necesario.',
+        creative: 'Eres un asistente creativo e innovador. Responde con ideas originales y enfoques únicos.'
+    };
+    
+    const toolImports = [];
+    const toolDefinitions = [];
+    
+    if (tools.includes('Enviar emails')) {
+        toolImports.push('from langchain.tools import Tool');
+        toolImports.push('import smtplib');
+        toolDefinitions.push(`
+def send_email(recipient, subject, body):
+    \"\"\"Envía un email al destinatario especificado\"\"\"
+    # Implementación real con SMTP
+    return f"Email enviado a {recipient}"
+`);
+    }
+    
+    if (tools.includes('Buscar en web')) {
+        toolImports.push('from langchain.utilities import GoogleSearchAPIWrapper');
+        toolDefinitions.push(`
+search = GoogleSearchAPIWrapper()
+`);
+    }
+    
+    if (tools.includes('Gestionar archivos')) {
+        toolDefinitions.push(`
+def read_file(filename):
+    \"\"\"Lee el contenido de un archivo\"\"\"
+    with open(filename, 'r') as f:
+        return f.read()
+
+def write_file(filename, content):
+    \"\"\"Escribe contenido en un archivo\"\"\"
+    with open(filename, 'w') as f:
+        f.write(content)
+    return f"Archivo {filename} guardado"
+`);
+    }
+    
+    const uniqueImports = [...new Set(toolImports)];
+    
+    return `# ${'='.repeat(50)}
+# Agente de IA: ${agentName}
+# ${'='.repeat(50)}
+# Propósito: ${purpose}
+# Personalidad: ${personality}
+# Herramientas: ${tools.join(', ') || 'Ninguna'}
+# ${'='.repeat(50)}
+
+${uniqueImports.join('\n')}
+
+from langchain.chat_models import ChatOpenAI
+from langchain.agents import initialize_agent, AgentType
+from langchain.memory import ConversationBufferMemory
+
+${toolDefinitions.join('\n')}
+
+# Configurar el modelo de lenguaje
+llm = ChatOpenAI(
+    temperature=0.7,
+    model_name="gpt-4"
+)
+
+# Configurar memoria
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# Sistema de instrucciones (Personalidad: ${personality})
+SYSTEM_PROMPT = \"\"\"
+${personalityPrompts[personality]}
+
+Propósito del agente: ${purpose}
+
+Instrucciones:
+- Sé útil y responde a las preguntas del usuario
+- Usa las herramientas disponibles cuando sea necesario
+- Mantén un contexto de la conversación
+- Sé conciso pero completo en tus respuestas
+\"\"\"
+
+# Definir herramientas
+tools = [
+    ${tools.map(tool => {
+        if (tool === 'Enviar emails') {
+            return 'Tool(name="SendEmail", func=send_email, description="Envía emails a destinatarios")';
+        } else if (tool === 'Buscar en web') {
+            return 'Tool(name="Search", func=search.run, description="Busca información en internet")';
+        } else if (tool === 'Gestionar archivos') {
+            return 'Tool(name="ReadFile", func=read_file, description="Lee archivos"),\n    Tool(name="WriteFile", func=write_file, description="Escribe en archivos")';
+        } else if (tool === 'Calendario') {
+            return 'Tool(name="Calendar", func=lambda x: "Eventos del calendario", description="Gestiona eventos de calendario")';
+        } else if (tool === 'APIs externas') {
+            return 'Tool(name="API", func=lambda x: "Llamada a API", description="Conecta con APIs externas")';
+        } else if (tool === 'Base de datos') {
+            return 'Tool(name="Database", func=lambda x: "Consulta BD", description="Accede a base de datos")';
+        }
+        return '';
+    }).filter(t => t).join(',\n    ')}
+]
+
+# Crear el agente
+agent = initialize_agent(
+    tools=tools,
+    llm=llm,
+    agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+    verbose=True,
+    memory=memory,
+    handle_parsing_errors=True
+)
+
+print(f"✅ Agente '${agentName}' iniciado correctamente")
+print(f"📝 Propósito: ${purpose}")
+print(f"🛠️  Herramientas: ${tools.length} disponibles")
+print("=" * 50)
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    while True:
+        user_input = input("\\n👤 Tú: ")
+        
+        if user_input.lower() in ['salir', 'exit', 'quit']:
+            print("👋 ¡Hasta luego!")
+            break
+        
+        try:
+            response = agent.run(user_input)
+            print(f"🤖 ${agentName}: {response}")
+        except Exception as e:
+            print(f"❌ Error: {e}")
+`;
+}
+
+// Función para generar código JavaScript
+function generateJavaScriptCode(agentName, personality, purpose, tools) {
+    const personalityPrompts = {
+        formal: 'Eres un asistente profesional y formal. Responde de manera precisa y técnica.',
+        casual: 'Eres un asistente amigable y casual. Responde de manera relajada y cercana.',
+        technical: 'Eres un asistente técnico experto. Responde con detalle y precisión, incluyendo código cuando sea necesario.',
+        creative: 'Eres un asistente creativo e innovador. Responde con ideas originales y enfoques únicos.'
+    };
+    
+    return `// ${'='.repeat(50)}
+// Agente de IA: ${agentName}
+// ${'='.repeat(50)}
+// Propósito: ${purpose}
+// Personalidad: ${personality}
+// Herramientas: ${tools.join(', ') || 'Ninguna'}
+// ${'='.repeat(50)}
+
+const { ChatOpenAI } = require('langchain/chat_models/openai');
+const { BufferMemory } = require('langchain/memory');
+const { initializeAgentExecutorWithOptions } = require('langchain/agents');
+
+// Configurar el modelo de lenguaje
+const model = new ChatOpenAI({
+    temperature: 0.7,
+    modelName: "gpt-4"
+});
+
+// Configurar memoria
+const memory = new BufferMemory({
+    memoryKey: "chat_history",
+    returnMessages: true
+});
+
+// Sistema de instrucciones (Personalidad: ${personality})
+const SYSTEM_PROMPT = \`
+${personalityPrompts[personality]}
+
+Propósito del agente: ${purpose}
+
+Instrucciones:
+- Sé útil y responde a las preguntas del usuario
+- Usa las herramientas disponibles cuando sea necesario
+- Mantén un contexto de la conversación
+- Sé conciso pero completo en tus respuestas
+\`;
+
+// Definir herramientas
+const tools = [
+    ${tools.map(tool => {
+        if (tool === 'Enviar emails') {
+            return `{ name: "SendEmail", description: "Envía emails a destinatarios", func: async (input) => { return \`Email enviado: \${input}\`; } }`;
+        } else if (tool === 'Buscar en web') {
+            return `{ name: "Search", description: "Busca información en internet", func: async (input) => { return \`Resultados para: \${input}\`; } }`;
+        } else if (tool === 'Gestionar archivos') {
+            return `{ name: "ReadFile", description: "Lee archivos", func: async (input) => { return \`Contenido de \${input}\`; } },
+    { name: "WriteFile", description: "Escribe en archivos", func: async (input) => { return \`Archivo guardado: \${input}\`; } }`;
+        } else {
+            return `{ name: "${tool}", description: "${tool}", func: async (input) => { return \`\${input}\`; } }`;
+        }
+    }).join(',\n    ')}
+];
+
+// Crear el agente
+const agent = await initializeAgentExecutorWithOptions(
+    tools,
+    model,
+    {
+        agentType: "chat-conversational-react-description",
+        verbose: true,
+        memory: memory
+    }
+);
+
+console.log(\`✅ Agente '${agentName}' iniciado correctamente\`);
+console.log(\`📝 Propósito: ${purpose}\`);
+console.log(\`🛠️  Herramientas: ${tools.length} disponibles\`);
+console.log("=".repeat(50));
+
+// Ejemplo de uso
+async function runAgent() {
+    const prompts = [
+        "Hola, ¿qué puedes hacer?",
+        "Explícame tu propósito"
+    ];
+    
+    for (const prompt of prompts) {
+        console.log(\`\\n👤 Tú: \${prompt}\`);
+        const result = await agent.call({ input: prompt });
+        console.log(\`🤖 ${agentName}: \${result.output}\`);
+    }
+}
+
+runAgent().catch(console.error);
+`;
+}
