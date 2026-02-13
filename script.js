@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const simulateAgentBtn = document.getElementById('simulateAgentBtn');
     const agentLog = document.getElementById('agentLog');
 
-    if (simulateAgentBtn) {
+    if (simulateAgentBtn && agentLog) {
         simulateAgentBtn.addEventListener('click', () => {
             agentLog.innerHTML = '<div class="log-entry system">[SISTEMA] Agente iniciado...</div>';
             
@@ -33,6 +33,334 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearInterval(interval);
                 }
             }, 500);
+        });
+    }
+
+    // ===== DEMO 2: Chat con/sin memoria =====
+    const sendNoMemory = document.getElementById('sendNoMemory');
+    const sendWithMemory = document.getElementById('sendWithMemory');
+    const inputNoMemory = document.getElementById('inputNoMemory');
+    const inputWithMemory = document.getElementById('inputWithMemory');
+    const chatNoMemory = document.getElementById('chatNoMemory');
+    const chatWithMemory = document.getElementById('chatWithMemory');
+
+    if (sendNoMemory && chatNoMemory && inputNoMemory) {
+        sendNoMemory.addEventListener('click', () => {
+            const message = inputNoMemory.value.trim();
+            if (!message) return;
+
+            addMessage(chatNoMemory, message, 'user');
+            inputNoMemory.value = '';
+
+            setTimeout(() => {
+                addMessage(chatNoMemory, 'Entendido. ¿Algo más en lo que pueda ayudarte?', 'assistant');
+            }, 800);
+        });
+
+        inputNoMemory.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendNoMemory.click();
+        });
+    }
+
+    if (sendWithMemory && chatWithMemory && inputWithMemory) {
+        let conversationHistory = [];
+
+        sendWithMemory.addEventListener('click', () => {
+            const message = inputWithMemory.value.trim();
+            if (!message) return;
+
+            addMessage(chatWithMemory, message, 'user');
+            conversationHistory.push({ role: 'user', content: message });
+            inputWithMemory.value = '';
+
+            setTimeout(() => {
+                let response;
+                const context = conversationHistory.slice(-3).map(m => m.content).join(' ');
+                
+                if (context.toLowerCase().includes('nombre') || context.toLowerCase().includes('cómo te llamas')) {
+                    response = 'Me llamo QUBIZ, soy tu asistente de IA. ¿En qué más puedo ayudarte?';
+                } else if (context.toLowerCase().includes('adiós') || context.toLowerCase().includes('hasta luego')) {
+                    response = '¡Hasta luego! Estaré aquí cuando me necesites.';
+                } else if (conversationHistory.length > 3) {
+                    response = `Entendido. Llevamos ${conversationHistory.length + 1} mensajes en esta conversación. ¿Algo más?`;
+                } else {
+                    response = 'Entendido. ¿Algo más en lo que pueda ayudarte?';
+                }
+
+                addMessage(chatWithMemory, response, 'assistant');
+                conversationHistory.push({ role: 'assistant', content: response });
+            }, 800);
+        });
+
+        inputWithMemory.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendWithMemory.click();
+        });
+    }
+
+    function addMessage(chatBox, text, role) {
+        if (!chatBox) return;
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${role}`;
+        messageDiv.textContent = text;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // ===== DEMO 3: Selector de herramientas =====
+    const capabilitiesList = document.getElementById('capabilitiesList');
+    const selectedTools = new Set();
+
+    window.toggleTool = function(toolName) {
+        const checkbox = document.getElementById(`tool${toolName.charAt(0).toUpperCase() + toolName.slice(1)}`);
+        if (!checkbox) return;
+        
+        checkbox.checked = !checkbox.checked;
+        
+        if (checkbox.checked) {
+            selectedTools.add(toolName);
+        } else {
+            selectedTools.delete(toolName);
+        }
+
+        updateCapabilities();
+    };
+
+    function updateCapabilities() {
+        if (!capabilitiesList) return;
+        
+        capabilitiesList.innerHTML = '';
+
+        if (selectedTools.size === 0) {
+            const item = document.createElement('div');
+            item.className = 'capability disabled';
+            item.textContent = 'Sin herramientas seleccionadas';
+            capabilitiesList.appendChild(item);
+            return;
+        }
+
+        selectedTools.forEach(tool => {
+            const item = document.createElement('div');
+            item.className = 'capability enabled';
+            
+            const descriptions = {
+                'email': '📧 Puede enviar y recibir emails',
+                'search': '🔍 Puede buscar información en internet',
+                'files': '📁 Puede crear, leer y modificar archivos',
+                'calendar': '📅 Puede gestionar eventos y recordatorios',
+                'api': '🔌 Puede conectar con APIs externas',
+                'db': '🗄️ Puede acceder a bases de datos'
+            };
+
+            item.textContent = descriptions[tool] || `✅ Herramienta: ${tool}`;
+            capabilitiesList.appendChild(item);
+        });
+    }
+
+    // ===== AGENT BUILDER INTERACTIVO =====
+    // Actualizar vista previa del nombre
+    const agentNameInput = document.getElementById('agentName');
+    const previewName = document.getElementById('previewName');
+    
+    if (agentNameInput && previewName) {
+        agentNameInput.addEventListener('input', () => {
+            previewName.textContent = agentNameInput.value.trim() || 'MiAgenteIA';
+        });
+    }
+    
+    // Actualizar vista previa de personalidad
+    const personalityOptions = document.querySelectorAll('.personality-option');
+    const previewPersonality = document.getElementById('previewPersonality');
+    
+    personalityOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            personalityOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            
+            const personalityValue = option.getAttribute('data-value');
+            const personalityText = option.querySelector('.personality-name').textContent;
+            const personalityIcon = option.querySelector('.personality-icon').textContent;
+            
+            if (previewPersonality) {
+                previewPersonality.innerHTML = `
+                    <span class="personality-badge ${personalityValue}">
+                        ${personalityIcon} ${personalityText}
+                    </span>
+                `;
+            }
+        });
+    });
+    
+    // Actualizar vista previa de propósito
+    const agentPurposeInput = document.getElementById('agentPurpose');
+    const previewPurpose = document.getElementById('previewPurpose');
+    
+    if (agentPurposeInput && previewPurpose) {
+        agentPurposeInput.addEventListener('input', () => {
+            previewPurpose.textContent = agentPurposeInput.value.trim() || 'Sin propósito definido';
+        });
+    }
+    
+    // Actualizar vista previa de herramientas
+    const toolCheckboxes = document.querySelectorAll('.tool-checkbox input[type="checkbox"]');
+    const previewTools = document.getElementById('previewTools');
+    
+    toolCheckboxes.forEach(checkbox => {
+        const toolCheckbox = checkbox.closest('.tool-checkbox');
+        if (!toolCheckbox) return;
+        
+        toolCheckbox.addEventListener('click', (e) => {
+            if (e.target !== checkbox) {
+                checkbox.checked = !checkbox.checked;
+            }
+            
+            if (checkbox.checked) {
+                toolCheckbox.classList.add('checked');
+            } else {
+                toolCheckbox.classList.remove('checked');
+            }
+            
+            updatePreviewTools();
+        });
+        
+        checkbox.addEventListener('change', updatePreviewTools);
+    });
+    
+    function updatePreviewTools() {
+        if (!previewTools) return;
+        
+        const selectedTools = [];
+        toolCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const label = checkbox.nextElementSibling;
+                const toolName = label.querySelector('.tool-name')?.textContent || '';
+                const toolIcon = label.querySelector('.tool-icon')?.textContent || '';
+                if (toolName) selectedTools.push({ icon: toolIcon, name: toolName });
+            }
+        });
+        
+        if (selectedTools.length === 0) {
+            previewTools.innerHTML = '<span class="tool-badge">❌ Sin herramientas</span>';
+        } else {
+            previewTools.innerHTML = selectedTools.map(tool => 
+                `<span class="tool-badge">${tool.icon} ${tool.name}</span>`
+            ).join('');
+        }
+    }
+    
+    // Generar código del agente
+    const generateAgentBtn = document.getElementById('generateAgentBtn');
+    const generatedCodeSection = document.getElementById('generatedCodeSection');
+    const generatedCode = document.getElementById('generatedCode');
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const downloadCodeBtn = document.getElementById('downloadCodeBtn');
+    
+    if (generateAgentBtn && generatedCodeSection && generatedCode) {
+        generateAgentBtn.addEventListener('click', () => {
+            const agentName = (document.getElementById('agentName')?.value || 'MiAgenteIA').trim() || 'MiAgenteIA';
+            const personalityElement = document.querySelector('input[name="personality"]:checked');
+            const personality = personalityElement?.value || 'formal';
+            const purpose = (document.getElementById('agentPurpose')?.value || 'Gestionar emails importantes y buscar información relevante').trim() || 'Sin propósito definido';
+            
+            // Obtener herramientas seleccionadas
+            const tools = [];
+            document.querySelectorAll('.tool-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
+                const label = checkbox.nextElementSibling;
+                const toolName = label.querySelector('.tool-name')?.textContent || '';
+                if (toolName) tools.push(toolName);
+            });
+            
+            // Generar código Python por defecto
+            const pythonCode = generatePythonCode(agentName, personality, purpose, tools);
+            
+            // Mostrar sección de código
+            generatedCodeSection.style.display = 'block';
+            generatedCode.innerHTML = `<code>${pythonCode}</code>`;
+            
+            // Scroll suave a la sección de código
+            generatedCodeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            showAlert(`✅ ¡Código generado para ${agentName}!`, 'success');
+        });
+    }
+    
+    // Tabs de código (Python/JavaScript) en el generador
+    document.querySelectorAll('.code-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.code-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const lang = btn.getAttribute('data-lang');
+            const agentName = (document.getElementById('agentName')?.value || 'MiAgenteIA').trim() || 'MiAgenteIA';
+            const personalityElement = document.querySelector('input[name="personality"]:checked');
+            const personality = personalityElement?.value || 'formal';
+            const purpose = (document.getElementById('agentPurpose')?.value || 'Gestionar emails importantes y buscar información relevante').trim() || 'Sin propósito definido';
+            
+            const tools = [];
+            document.querySelectorAll('.tool-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
+                const label = checkbox.nextElementSibling;
+                const toolName = label.querySelector('.tool-name')?.textContent || '';
+                if (toolName) tools.push(toolName);
+            });
+            
+            let code = '';
+            if (lang === 'python') {
+                code = generatePythonCode(agentName, personality, purpose, tools);
+            } else {
+                code = generateJavaScriptCode(agentName, personality, purpose, tools);
+            }
+            
+            if (generatedCode) {
+                generatedCode.innerHTML = `<code>${code}</code>`;
+            }
+        });
+    });
+    
+    // Copiar código
+    if (copyCodeBtn && generatedCode) {
+        copyCodeBtn.addEventListener('click', () => {
+            const codeText = generatedCode.querySelector('code')?.textContent || '';
+            if (!codeText) return;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalText = copyCodeBtn.textContent;
+                copyCodeBtn.textContent = '✓ ¡Copiado!';
+                copyCodeBtn.style.background = 'var(--color-success)';
+                
+                setTimeout(() => {
+                    copyCodeBtn.textContent = originalText;
+                    copyCodeBtn.style.background = '';
+                }, 2000);
+                
+                showAlert('📋 Código copiado al portapapeles', 'success');
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                showAlert('❌ Error al copiar el código', 'danger');
+            });
+        });
+    }
+    
+    // Descargar código
+    if (downloadCodeBtn && generatedCode) {
+        downloadCodeBtn.addEventListener('click', () => {
+            const agentName = (document.getElementById('agentName')?.value || 'MiAgenteIA').trim() || 'MiAgenteIA';
+            const codeText = generatedCode.querySelector('code')?.textContent || '';
+            if (!codeText) return;
+            
+            const lang = document.querySelector('.code-tab-btn.active')?.getAttribute('data-lang') || 'python';
+            const extension = lang === 'python' ? 'py' : 'js';
+            const filename = `${agentName.replace(/\s+/g, '_')}.${extension}`;
+            
+            const blob = new Blob([codeText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showAlert(`📥 Código descargado como ${filename}`, 'success');
         });
     }
 
@@ -74,6 +402,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const theme = btn.getAttribute('data-theme');
             document.body.setAttribute('data-theme', theme);
             localStorage.setItem('aiPillTheme', theme);
+            
+            // Forzar actualización de estilos en bloques de código
+            document.querySelectorAll('.code-example, .code-display-container').forEach(el => {
+                el.style.display = 'none';
+                setTimeout(() => { el.style.display = 'block'; }, 10);
+            });
             
             showAlert(`🎨 Tema "${theme}" aplicado`, 'success');
         });
@@ -121,13 +455,19 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Actualizar UI
             document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector('.theme-btn[data-theme="default"]').classList.add('active');
+            document.querySelector('.theme-btn[data-theme="default"]')?.classList.add('active');
             
             document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector('.font-btn[data-font="default"]').classList.add('active');
+            document.querySelector('.font-btn[data-font="default"]')?.classList.add('active');
             
             document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector('.size-btn[data-size="normal"]').classList.add('active');
+            document.querySelector('.size-btn[data-size="normal"]')?.classList.add('active');
+            
+            // Forzar actualización de estilos en bloques de código
+            document.querySelectorAll('.code-example, .code-display-container').forEach(el => {
+                el.style.display = 'none';
+                setTimeout(() => { el.style.display = 'block'; }, 10);
+            });
             
             showAlert('↺ Ajustes restablecidos correctamente', 'success');
         });
@@ -200,19 +540,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Actualizar cada segundo
     setInterval(actualizarRelojBilbao, 1000);
 
-    // ===== TABS FUNCTIONALITY =====
+    // ===== TABS FUNCTIONALITY (para ejemplos de código) =====
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const tabGroup = this.closest('.tabs');
-            tabGroup.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (!tabGroup) return;
             
+            tabGroup.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             
-            const contentGroup = this.closest('.code-example').querySelector('.tab-content');
+            const contentGroup = this.closest('.code-example')?.querySelector('.tab-content');
+            if (!contentGroup) return;
+            
             contentGroup.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
             
             const tabId = this.getAttribute('data-tab');
-            document.getElementById(tabId).classList.add('active');
+            const targetPane = document.getElementById(tabId);
+            if (targetPane) {
+                targetPane.classList.add('active');
+            }
         });
     });
 
@@ -220,6 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const item = this.closest('.checklist-item');
+            if (!item) return;
             
             if (this.checked) {
                 item.style.borderColor = 'var(--color-success)';
@@ -242,9 +589,254 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('💡 Prueba las demos interactivas y ajusta el tema a tu gusto');
 });
 
-// Función para mostrar alertas
+// ===== FUNCIONES PARA GENERAR CÓDIGO =====
+function generatePythonCode(agentName, personality, purpose, tools) {
+    const personalityPrompts = {
+        formal: 'Eres un asistente profesional y formal. Responde de manera precisa y técnica.',
+        casual: 'Eres un asistente amigable y casual. Responde de manera relajada y cercana.',
+        technical: 'Eres un asistente técnico experto. Responde con detalle y precisión, incluyendo código cuando sea necesario.',
+        creative: 'Eres un asistente creativo e innovador. Responde con ideas originales y enfoques únicos.'
+    };
+    
+    const toolImports = [];
+    const toolDefinitions = [];
+    
+    if (tools.includes('Enviar emails')) {
+        toolImports.push('from langchain.tools import Tool');
+        toolImports.push('import smtplib');
+        toolDefinitions.push(`
+def send_email(recipient, subject, body):
+    \"\"\"Envía un email al destinatario especificado\"\"\"
+    # Implementación real con SMTP
+    return f"Email enviado a {recipient}"
+`);
+    }
+    
+    if (tools.includes('Buscar en web')) {
+        toolImports.push('from langchain.utilities import GoogleSearchAPIWrapper');
+        toolDefinitions.push(`
+search = GoogleSearchAPIWrapper()
+`);
+    }
+    
+    if (tools.includes('Gestionar archivos')) {
+        toolDefinitions.push(`
+def read_file(filename):
+    \"\"\"Lee el contenido de un archivo\"\"\"
+    with open(filename, 'r') as f:
+        return f.read()
+
+def write_file(filename, content):
+    \"\"\"Escribe contenido en un archivo\"\"\"
+    with open(filename, 'w') as f:
+        f.write(content)
+    return f"Archivo {filename} guardado"
+`);
+    }
+    
+    const uniqueImports = [...new Set(toolImports)];
+    
+    return `# ${'='.repeat(50)}
+# Agente de IA: ${agentName}
+# ${'='.repeat(50)}
+# Propósito: ${purpose}
+# Personalidad: ${personality}
+# Herramientas: ${tools.join(', ') || 'Ninguna'}
+# ${'='.repeat(50)}
+
+${uniqueImports.join('\n')}
+
+from langchain.chat_models import ChatOpenAI
+from langchain.agents import initialize_agent, AgentType
+from langchain.memory import ConversationBufferMemory
+
+${toolDefinitions.join('\n')}
+
+# Configurar el modelo de lenguaje
+llm = ChatOpenAI(
+    temperature=0.7,
+    model_name="gpt-4"
+)
+
+# Configurar memoria
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# Sistema de instrucciones (Personalidad: ${personality})
+SYSTEM_PROMPT = \"\"\"
+${personalityPrompts[personality]}
+
+Propósito del agente: ${purpose}
+
+Instrucciones:
+- Sé útil y responde a las preguntas del usuario
+- Usa las herramientas disponibles cuando sea necesario
+- Mantén un contexto de la conversación
+- Sé conciso pero completo en tus respuestas
+\"\"\"
+
+# Definir herramientas
+tools = [
+    ${tools.map(tool => {
+        if (tool === 'Enviar emails') {
+            return 'Tool(name="SendEmail", func=send_email, description="Envía emails a destinatarios")';
+        } else if (tool === 'Buscar en web') {
+            return 'Tool(name="Search", func=search.run, description="Busca información en internet")';
+        } else if (tool === 'Gestionar archivos') {
+            return 'Tool(name="ReadFile", func=read_file, description="Lee archivos"),\n    Tool(name="WriteFile", func=write_file, description="Escribe en archivos")';
+        } else if (tool === 'Calendario') {
+            return 'Tool(name="Calendar", func=lambda x: "Eventos del calendario", description="Gestiona eventos de calendario")';
+        } else if (tool === 'APIs externas') {
+            return 'Tool(name="API", func=lambda x: "Llamada a API", description="Conecta con APIs externas")';
+        } else if (tool === 'Base de datos') {
+            return 'Tool(name="Database", func=lambda x: "Consulta BD", description="Accede a base de datos")';
+        }
+        return '';
+    }).filter(t => t).join(',\n    ')}
+]
+
+# Crear el agente
+agent = initialize_agent(
+    tools=tools,
+    llm=llm,
+    agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+    verbose=True,
+    memory=memory,
+    handle_parsing_errors=True
+)
+
+print(f"✅ Agente '${agentName}' iniciado correctamente")
+print(f"📝 Propósito: ${purpose}")
+print(f"🛠️  Herramientas: ${tools.length} disponibles")
+print("=" * 50)
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    while True:
+        user_input = input("\\n👤 Tú: ")
+        
+        if user_input.lower() in ['salir', 'exit', 'quit']:
+            print("👋 ¡Hasta luego!")
+            break
+        
+        try:
+            response = agent.run(user_input)
+            print(f"🤖 ${agentName}: {response}")
+        except Exception as e:
+            print(f"❌ Error: {e}")
+`;
+}
+
+function generateJavaScriptCode(agentName, personality, purpose, tools) {
+    const personalityPrompts = {
+        formal: 'Eres un asistente profesional y formal. Responde de manera precisa y técnica.',
+        casual: 'Eres un asistente amigable y casual. Responde de manera relajada y cercana.',
+        technical: 'Eres un asistente técnico experto. Responde con detalle y precisión, incluyendo código cuando sea necesario.',
+        creative: 'Eres un asistente creativo e innovador. Responde con ideas originales y enfoques únicos.'
+    };
+    
+    return `// ${'='.repeat(50)}
+// Agente de IA: ${agentName}
+// ${'='.repeat(50)}
+// Propósito: ${purpose}
+// Personalidad: ${personality}
+// Herramientas: ${tools.join(', ') || 'Ninguna'}
+// ${'='.repeat(50)}
+
+const { ChatOpenAI } = require('langchain/chat_models/openai');
+const { BufferMemory } = require('langchain/memory');
+const { initializeAgentExecutorWithOptions } = require('langchain/agents');
+
+// Configurar el modelo de lenguaje
+const model = new ChatOpenAI({
+    temperature: 0.7,
+    modelName: "gpt-4"
+});
+
+// Configurar memoria
+const memory = new BufferMemory({
+    memoryKey: "chat_history",
+    returnMessages: true
+});
+
+// Sistema de instrucciones (Personalidad: ${personality})
+const SYSTEM_PROMPT = \`
+${personalityPrompts[personality]}
+
+Propósito del agente: ${purpose}
+
+Instrucciones:
+- Sé útil y responde a las preguntas del usuario
+- Usa las herramientas disponibles cuando sea necesario
+- Mantén un contexto de la conversación
+- Sé conciso pero completo en tus respuestas
+\`;
+
+// Definir herramientas
+const tools = [
+    ${tools.map(tool => {
+        if (tool === 'Enviar emails') {
+            return `{ name: "SendEmail", description: "Envía emails a destinatarios", func: async (input) => { return \`Email enviado: \${input}\`; } }`;
+        } else if (tool === 'Buscar en web') {
+            return `{ name: "Search", description: "Busca información en internet", func: async (input) => { return \`Resultados para: \${input}\`; } }`;
+        } else if (tool === 'Gestionar archivos') {
+            return `{ name: "ReadFile", description: "Lee archivos", func: async (input) => { return \`Contenido de \${input}\`; } },
+    { name: "WriteFile", description: "Escribe en archivos", func: async (input) => { return \`Archivo guardado: \${input}\`; } }`;
+        } else if (tool === 'Calendario') {
+            return `{ name: "Calendar", description: "Gestiona eventos de calendario", func: async (input) => { return \`Eventos: \${input}\`; } }`;
+        } else if (tool === 'APIs externas') {
+            return `{ name: "API", description: "Conecta con APIs externas", func: async (input) => { return \`API response: \${input}\`; } }`;
+        } else if (tool === 'Base de datos') {
+            return `{ name: "Database", description: "Accede a base de datos", func: async (input) => { return \`DB result: \${input}\`; } }`;
+        }
+        return `{ name: "${tool}", description: "${tool}", func: async (input) => { return \`\${input}\`; } }`;
+    }).join(',\n    ')}
+];
+
+// Crear el agente
+const agent = await initializeAgentExecutorWithOptions(
+    tools,
+    model,
+    {
+        agentType: "chat-conversational-react-description",
+        verbose: true,
+        memory: memory
+    }
+);
+
+console.log(\`✅ Agente '${agentName}' iniciado correctamente\`);
+console.log(\`📝 Propósito: ${purpose}\`);
+console.log(\`🛠️  Herramientas: ${tools.length} disponibles\`);
+console.log("=".repeat(50));
+
+// Ejemplo de uso
+async function runAgent() {
+    const prompts = [
+        "Hola, ¿qué puedes hacer?",
+        "Explícame tu propósito"
+    ];
+    
+    for (const prompt of prompts) {
+        console.log(\`\\n👤 Tú: \${prompt}\`);
+        const result = await agent.call({ input: prompt });
+        console.log(\`🤖 ${agentName}: \${result.output}\`);
+    }
+}
+
+runAgent().catch(console.error);
+`;
+}
+
+// ===== FUNCIÓN PARA MOSTRAR ALERTAS =====
 function showAlert(message, type) {
+    // Eliminar alertas existentes
+    const existingAlerts = document.querySelectorAll('.alert-toast');
+    existingAlerts.forEach(alert => alert.remove());
+    
     const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert-toast';
     alertDiv.style.cssText = `
         position: fixed;
         top: 20px;
@@ -256,6 +848,7 @@ function showAlert(message, type) {
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         z-index: 1000;
         animation: slideIn 0.3s ease;
+        margin-bottom: 10px;
     `;
     
     if (type === 'danger') {
@@ -275,7 +868,7 @@ function showAlert(message, type) {
     }, 2500);
 }
 
-// Añadir animaciones CSS
+// ===== AÑADIR ANIMACIONES CSS =====
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
@@ -286,6 +879,10 @@ style.textContent = `
     @keyframes slideOut {
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(400px); opacity: 0; }
+    }
+    
+    .alert-toast {
+        margin-bottom: 10px !important;
     }
 `;
 document.head.appendChild(style);
