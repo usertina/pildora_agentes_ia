@@ -22,7 +22,6 @@
 
     <!-- Main Content -->
     <main class="container">
-        
         <!-- Introducción -->
         <section class="intro">
             <h2>👋 ¿Qué es un Agente de IA?</h2>
@@ -1070,47 +1069,6 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
             </div>
         </section>
 
-        <!-- Checklist Final -->
-        <section class="checklist-section">
-            <h2>✅ Checklist para crear tu Agente de IA</h2>
-            <p>Antes de empezar, revisa esta lista:</p>
-            
-            <div class="checklist-grid">
-                <div class="checklist-item">
-                    <input type="checkbox" id="check1">
-                    <label for="check1">Define el ciclo Pensar → Decidir → Actuar</label>
-                </div>
-                <div class="checklist-item">
-                    <input type="checkbox" id="check2">
-                    <label for="check2">Implementa memoria (corto y largo plazo)</label>
-                </div>
-                <div class="checklist-item">
-                    <input type="checkbox" id="check3">
-                    <label for="check3">Crea herramientas específicas para tu agente</label>
-                </div>
-                <div class="checklist-item">
-                    <input type="checkbox" id="check4">
-                    <label for="check4">Integra APIs externas como herramientas</label>
-                </div>
-                <div class="checklist-item">
-                    <input type="checkbox" id="check5">
-                    <label for="check5">Define el contexto y personalidad del agente</label>
-                </div>
-                <div class="checklist-item">
-                    <input type="checkbox" id="check6">
-                    <label for="check6">Implementa logging para depurar el agente</label>
-                </div>
-                <div class="checklist-item">
-                    <input type="checkbox" id="check7">
-                    <label for="check7">Prueba el agente con casos de uso reales</label>
-                </div>
-                <div class="checklist-item">
-                    <input type="checkbox" id="check8">
-                    <label for="check8">Considera un sistema multi-agente si es complejo</label>
-                </div>
-            </div>
-        </section>
-
         <!-- Regla 6: Crea tu primer agente -->
         <section class="rule-card" data-level="beginner">
             <div class="rule-header">
@@ -1290,6 +1248,47 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
             </div>
         </section>
 
+        <!-- Checklist Final -->
+        <section class="checklist-section">
+            <h2>✅ Checklist para crear tu Agente de IA</h2>
+            <p>Antes de empezar, revisa esta lista:</p>
+            
+            <div class="checklist-grid">
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1">
+                    <label for="check1">Define el ciclo Pensar → Decidir → Actuar</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2">
+                    <label for="check2">Implementa memoria (corto y largo plazo)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3">
+                    <label for="check3">Crea herramientas específicas para tu agente</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check4">
+                    <label for="check4">Integra APIs externas como herramientas</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check5">
+                    <label for="check5">Define el contexto y personalidad del agente</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check6">
+                    <label for="check6">Implementa logging para depurar el agente</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check7">
+                    <label for="check7">Prueba el agente con casos de uso reales</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check8">
+                    <label for="check8">Considera un sistema multi-agente si es complejo</label>
+                </div>
+            </div>
+        </section>
+
         <!-- Consejos Finales -->
         <section class="tips-section">
             <h2>💡 Consejos para tu Bootcamp</h2>
@@ -1335,92 +1334,91 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
                 </div>
             </div>
         </section>
-
     </main>
-<!-- Settings Wheel -->
-<div id="settingsWheel" class="settings-wheel">
-    ⚙️
-</div>
 
-<!-- Settings Panel -->
-<div id="settingsPanel" class="settings-panel">
-    <div class="settings-header">
-        <h3>Ajustes de la Píldora</h3>
-        <button id="closeSettings" class="close-settings">&times;</button>
+    <!-- Settings Wheel -->
+    <div id="settingsWheel" class="settings-wheel">
+        ⚙️
     </div>
-    <div class="settings-content">
-        <div class="setting-group">
-            <label>🎨 Tema Visual</label>
-            <div class="theme-options">
-                <button class="theme-btn active" data-theme="default">Por defecto</button>
-                <button class="theme-btn" data-theme="dark">Oscuro</button>
-                <button class="theme-btn" data-theme="matrix">Matrix</button>
-            </div>
-        </div>
-        
-        <div class="setting-group">
-            <label>💡 Densidad de información</label>
-            <div class="density-options">
-                <button class="density-btn active" data-density="normal">Normal</button>
-                <button class="density-btn" data-density="compact">Compacto</button>
-            </div>
-        </div>
-        
-        <div class="setting-group">
-            <label>🔊 Notificaciones</label>
-            <div class="toggle-container">
-                <span>Interactivas</span>
-                <label class="switch">
-                    <input type="checkbox" id="notificationsToggle" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-        
-        <div class="setting-group">
-            <button id="resetSettings" class="reset-btn">↺ Restablecer ajustes</button>
-        </div>
-        
-        <div class="settings-footer">
-            <p>✨ Ajustes guardados automáticamente en tu navegador</p>
-            <p class="settings-note">Estos ajustes solo afectan a tu experiencia visual en esta píldora educativa</p>
-        </div>
-    </div>
-</div>
 
-<!-- Footer con reloj de Bilbao -->
-<footer class="footer">
-    <div class="footer-content">
-        <div class="author-badge">
-            <div class="author-avatar">👤</div>
-            <div class="author-info">
-                <div class="author-name">Tina Calleja</div>
-                <a href="https://www.linkedin.com/in/tina-calleja/" target="_blank" rel="noopener noreferrer" class="linkedin-badge">
-                    <span class="linkedin-icon">in</span>
-                    <span class="linkedin-text">LinkedIn</span>
+    <!-- Settings Panel -->
+    <div id="settingsPanel" class="settings-panel">
+        <div class="settings-header">
+            <h3>Ajustes de la Píldora</h3>
+            <button id="closeSettings" class="close-settings">&times;</button>
+        </div>
+        <div class="settings-content">
+            <div class="setting-group">
+                <label>🎨 Tema Visual</label>
+                <div class="theme-options">
+                    <button class="theme-btn active" data-theme="default">Por defecto</button>
+                    <button class="theme-btn" data-theme="dark">Oscuro</button>
+                    <button class="theme-btn" data-theme="hacker">Hacker</button>
+                    <button class="theme-btn" data-theme="blue">Azul Profundo</button>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <label>🔤 Fuente</label>
+                <div class="font-options">
+                    <button class="font-btn active" data-font="default">Normal</button>
+                    <button class="font-btn" data-font="hacker">Hacker</button>
+                    <button class="font-btn" data-font="readable">Legible</button>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <label>🔍 Tamaño</label>
+                <div class="size-options">
+                    <button class="size-btn active" data-size="normal">Normal</button>
+                    <button class="size-btn" data-size="large">Grande</button>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <button id="resetSettings" class="reset-btn">↺ Restablecer ajustes</button>
+            </div>
+            
+            <div class="settings-footer">
+                <p>✨ Ajustes guardados automáticamente en tu navegador</p>
+                <p class="settings-note">Estos ajustes solo afectan a tu experiencia visual</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer con reloj de Bilbao -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="author-badge">
+                <div class="author-avatar">👤</div>
+                <div class="author-info">
+                    <div class="author-name">Tina Calleja</div>
+                    <a href="https://www.linkedin.com/in/tina-calleja/" target="_blank" rel="noopener noreferrer" class="linkedin-badge">
+                        <span class="linkedin-icon">in</span>
+                        <span class="linkedin-text">LinkedIn</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-divider"></div>
+            
+            <p class="footer-title">🤖 Agentes de IA para Humanos - Bootcamp Full Stack</p>
+            <p class="footer-tagline">Recuerda: un buen agente es como un buen asistente: entiende, decide y actúa</p>
+            
+            <div class="footer-credits">
+                <span class="clock-label">⏰ Hora actual en Bilbao:</span>
+                <span id="bilbaoTimeFooter" class="clock-time">--:--:--</span>
+                <span id="bilbaoDateFooter" class="clock-date">--/--/----</span>
+            </div>
+
+            <div class="company-logo-section">
+                <p class="company-label">para el Bootcamp Full Stack de</p>
+                <a href="https://www.linkedin.com/company/grupo-peñascal/posts/?feedView=all" target="_blank" rel="noopener noreferrer" class="company-logo-link">
+                    <img src="images/penascal-logo.png" alt="Peñascal Koop Logo" class="company-logo">
                 </a>
             </div>
         </div>
-        
-        <div class="footer-divider"></div>
-        
-        <p class="footer-title">🤖 Agentes de IA para Humanos - Bootcamp Full Stack</p>
-        <p class="footer-tagline">Recuerda: un buen agente es como un buen asistente: entiende, decide y actúa</p>
-        
-        <div class="footer-credits">
-            <span class="clock-label">⏰ Hora actual en Bilbao:</span>
-            <span id="bilbaoTimeFooter" class="clock-time">--:--:--</span>
-            <span id="bilbaoDateFooter" class="clock-date">--/--/----</span>
-        </div>
-
-        <div class="company-logo-section">
-            <p class="company-label">para el Bootcamp Full Stack de</p>
-            <a href="https://www.linkedin.com/company/grupo-peñascal/posts/?feedView=all" target="_blank" rel="noopener noreferrer" class="company-logo-link">
-                <img src="images/penascal-logo.png" alt="Peñascal Koop Logo" class="company-logo">
-            </a>
-        </div>
-    </div>
-</footer>
+    </footer>
 
     <script src="script.js"></script>
 </body>
