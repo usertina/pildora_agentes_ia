@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Agentes de IA para Humanos - Bootcamp Full Stack</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>🤖 Agentes de IA para Humanos</h1>
+            <p class="subtitle">No necesitas ser experto en IA para crear agentes inteligentes. Solo sentido común.</p>
+            <div class="badges">
+                <span class="badge beginner">Principiante</span>
+                <span class="badge intermediate">Intermedio</span>
+                <span class="badge advanced">Avanzado</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- Introducción -->
+        <section class="intro">
+            <h2>👋 ¿Qué es un Agente de IA?</h2>
+            <p>
+                Imagina que tienes un <strong>asistente personal</strong> que nunca duerme, nunca se queja, 
+                y puede hacer múltiples tareas a la vez.
+            </p>
+            <p>
+                Un agente de IA es exactamente eso: un programa que <strong>piensa, decide y actúa</strong> 
+                de forma autónoma para resolver problemas por ti.
+            </p>
+            <p class="highlight">
+                <strong>La buena noticia:</strong> Con las herramientas actuales, cualquiera puede crear agentes de IA.
+            </p>
+        </section>
+
+        <!-- Regla 1: El ciclo de pensamiento-acción -->
+        <section class="rule-card" data-level="beginner">
+            <div class="rule-header">
+                <span class="rule-number">1</span>
+                <h3>🧠 El cerebro del agente: Piensa → Decide → Actúa</h3>
+                <span class="level-tag beginner">Principiante</span>
+            </div>
+            <div class="rule-content">
+                <div class="analogy">
+                    <h4>Imagina esto:</h4>
+                    <p>
+                        Tienes un <strong>chef en tu cocina</strong>. No le dices "cocina algo". 
+                        Le das una <strong>receta</strong> (instrucciones), él <strong>piensa</strong> qué ingredientes necesita, 
+                        <strong>decide</strong> el orden de los pasos, y <strong>actúa</strong> cocinando.
+                    </p>
+                    <p>
+                        Un agente de IA funciona igual: <strong>instrucciones → pensamiento → acción</strong>.
+                    </p>
+                </div>
+
+                <div class="demo-section">
+                    <h4>🧪 Ejemplo práctico: Agente de vigilancia de emails</h4>
+                    <p>Mira cómo un agente decide qué hacer con un email:</p>
+                    
+                    <div class="agent-flow">
+                        <div class="flow-step">
+                            <div class="flow-icon">📧</div>
+                            <div class="flow-label">Recibe email</div>
+                        </div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-step">
+                            <div class="flow-icon">🤔</div>
+                            <div class="flow-label">Analiza contenido</div>
+                        </div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-step decision">
+                            <div class="flow-icon">❓</div>
+                            <div class="flow-label">¿Es importante?</div>
+                        </div>
+                        <div class="flow-branches">
+                            <div class="branch yes">
+                                <div class="flow-arrow">↓ Sí</div>
+                                <div class="flow-step">
+                                    <div class="flow-icon">🚨</div>
+                                    <div class="flow-label">Notifica al usuario</div>
+                                </div>
+                            </div>
+                            <div class="branch no">
+                                <div class="flow-arrow">↓ No</div>
+                                <div class="flow-step">
+                                    <div class="flow-icon">📁</div>
+                                    <div class="flow-label">Archiva automáticamente</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn" id="simulateAgentBtn">▶️ Simular agente en acción</button>
+                    
+                    <div class="agent-log" id="agentLog">
+                        <div class="log-entry system">[SISTEMA] Agente iniciado...</div>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <h4>En tu aplicación:</h4>
+                    <p>
+                        Un agente necesita tres componentes básicos:
+                    </p>
+                    
+                    <div class="code-example">
+                        <div class="tabs">
+                            <button class="tab-btn active" data-tab="python1">Python</button>
+                            <button class="tab-btn" data-tab="js1">JavaScript</button>
+                        </div>
+                        <div class="tab-content">
+                            <pre class="tab-pane active" id="python1"><code># ✅ Componentes básicos de un agente
+
+class EmailAgent:
+    def __init__(self):
+        self.memory = []  # Memoria del agente
+        self.tools = {
+            'analyze': self.analyze_email,
+            'notify': self.send_notification,
+            'archive': self.archive_email
+        }
+    
+    def think(self, email):
+        """Paso 1: Pensar/Analizar"""
+        print(f"🧠 Analizando email de: {email.sender}")
+        
+        # Analiza el contenido
+        is_important = self.analyze_email(email)
+        
+        return is_important
+    
+    def decide(self, analysis_result):
+        """Paso 2: Decidir"""
+        if analysis_result['priority'] == 'high':
+            return 'notify'
+        elif analysis_result['priority'] == 'medium':
+            return 'save_for_review'
+        else:
+            return 'archive'
+    
+    def act(self, decision, email):
+        """Paso 3: Actuar"""
+        print(f"⚙️ Decisión: {decision}")
+        
+        action = self.tools[decision]
+        action(email)
+    
+    def run(self, email):
+        """Ejecutar el ciclo completo"""
+        analysis = self.think(email)
+        decision = self.decide(analysis)
+        self.act(decision, email)
+        
+        print("✅ Tarea completada")
+
+
+# Uso del agente
+agent = EmailAgent()
+new_email = Email(sender="cliente@empresa.com", subject="URGENTE: Problema crítico")
+agent.run(new_email)
+</code></pre>
+                            <pre class="tab-pane" id="js1"><code>// ✅ Componentes básicos de un agente
+
+class EmailAgent {
+    constructor() {
+        this.memory = [];  // Memoria del agente
+        this.tools = {
+            analyze: this.analyzeEmail,
+            notify: this.sendNotification,
+            archive: this.archiveEmail
+        };
+    }
+    
+    think(email) {
+        // Paso 1: Pensar/Analizar
+        console.log(`🧠 Analizando email de: ${email.sender}`);
+        
+        // Analiza el contenido
+        const isImportant = this.analyzeEmail(email);
+        
+        return isImportant;
+    }
+    
+    decide(analysisResult) {
+        // Paso 2: Decidir
+        if (analysisResult.priority === 'high') {
+            return 'notify';
+        } else if (analysisResult.priority === 'medium') {
+            return 'save_for_review';
+        } else {
+            return 'archive';
+        }
+    }
+    
+    act(decision, email) {
+        // Paso 3: Actuar
+        console.log(`⚙️ Decisión: ${decision}`);
+        
+        const action = this.tools[decision];
+        action(email);
+    }
+    
+    run(email) {
+        // Ejecutar el ciclo completo
+        const analysis = this.think(email);
+        const decision = this.decide(analysis);
+        this.act(decision, email);
+        
+        console.log('✅ Tarea completada');
+    }
+    
+    analyzeEmail(email) {
+        // Lógica de análisis
+        if (email.subject.includes('URGENTE')) {
+            return { priority: 'high' };
+        }
+        return { priority: 'low' };
+    }
+    
+    sendNotification(email) {
+        console.log('🚨 Notificando al usuario...');
+    }
+    
+    archiveEmail(email) {
+        console.log('📁 Archivando email...');
+    }
+}
+
+// Uso del agente
+const agent = new EmailAgent();
+const newEmail = {
+    sender: 'cliente@empresa.com',
+    subject: 'URGENTE: Problema crítico'
+};
+agent.run(newEmail);
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="takeaway">
+                    <h4>🔑 Lo que debes recordar:</h4>
+                    <ul>
+                        <li><strong>Todos los agentes siguen el ciclo:</strong> Pensar → Decidir → Actuar</li>
+                        <li><strong>Necesitan memoria</strong> para recordar lo que han hecho</li>
+                        <li><strong>Usan herramientas</strong> para interactuar con el mundo</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Regla 2: Memoria y contexto -->
+        <section class="rule-card" data-level="intermediate">
+            <div class="rule-header">
+                <span class="rule-number">2</span>
+                <h3>📚 La memoria del agente: Contexto es todo</h3>
+                <span class="level-tag intermediate">Intermedio</span>
+            </div>
+            <div class="rule-content">
+                <div class="analogy">
+                    <h4>Imagina esto:</h4>
+                    <p>
+                        Hablas con un amigo que <strong>no recuerda nada</strong> de lo que le dijiste ayer. 
+                        Cada conversación empieza desde cero. ¡Frustrante!
+                    </p>
+                    <p>
+                        Un agente sin memoria es igual. La <strong>memoria</strong> le permite recordar 
+                        conversaciones pasadas, preferencias del usuario y contexto importante.
+                    </p>
+                </div>
+
+                <div class="demo-section">
+                    <h4>🧪 Prueba tú mismo: Memoria de conversación</h4>
+                    <p>Simula una conversación con y sin memoria:</p>
+                    
+                    <div class="memory-demo">
+                        <div class="memory-column">
+                            <h5>❌ Sin memoria (cada mensaje es nuevo)</h5>
+                            <div class="chat-box" id="chatNoMemory">
+                                <div class="chat-message assistant">Hola, ¿en qué puedo ayudarte?</div>
+                            </div>
+                            <input type="text" id="inputNoMemory" placeholder="Escribe tu mensaje...">
+                            <button class="btn-small" id="sendNoMemory">Enviar</button>
+                        </div>
+                        
+                        <div class="memory-column">
+                            <h5>✅ Con memoria (recuerda todo)</h5>
+                            <div class="chat-box" id="chatWithMemory">
+                                <div class="chat-message assistant">Hola, ¿en qué puedo ayudarte?</div>
+                            </div>
+                            <input type="text" id="inputWithMemory" placeholder="Escribe tu mensaje...">
+                            <button class="btn-small safe" id="sendWithMemory">Enviar</button>
+                        </div>
+                    </div>
+                    
+                    <div class="memory-info">
+                        <p><strong>💡 Tip:</strong> La memoria permite que el agente recuerde:</p>
+                        <ul>
+                            <li>Preferencias del usuario (ej: "Prefiero respuestas cortas")</li>
+                            <li>Contexto de conversaciones anteriores</li>
+                            <li>Acciones que ya ha realizado</li>
+                            <li>Información importante sobre el usuario</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <h4>En tu aplicación:</h4>
+                    <p>
+                        Implementa memoria usando vectores o almacenamiento de contexto:
+                    </p>
+                    
+                    <div class="code-example">
+                        <div class="tabs">
+                            <button class="tab-btn active" data-tab="python2">Python (LangChain)</button>
+                            <button class="tab-btn" data-tab="js2">JavaScript</button>
+                        </div>
+                        <div class="tab-content">
+                            <pre class="tab-pane active" id="python2"><code># ✅ Implementando memoria con LangChain
+
+from langchain.memory import ConversationBufferMemory
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import ConversationChain
+
+# Configurar memoria
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# Configurar el modelo
+llm = ChatOpenAI(temperature=0)
+
+# Crear cadena de conversación con memoria
+conversation = ConversationChain(
+    llm=llm,
+    memory=memory,
+    verbose=True
+)
+
+# Primera interacción
+response1 = conversation.predict(
+    input="Hola, me llamo Ana y trabajo como desarrolladora"
+)
+print(response1)  # "¡Hola Ana! ¿En qué puedo ayudarte hoy?"
+
+# Segunda interacción (el agente recuerda)
+response2 = conversation.predict(
+    input="¿Cuál es mi nombre?"
+)
+print(response2)  # "Tu nombre es Ana"
+
+# Tercera interacción (sigue recordando)
+response3 = conversation.predict(
+    input="¿A qué me dedico?"
+)
+print(response3)  # "Eres desarrolladora"
+
+
+# ✅ Memoria con vectores (para documentos largos)
+from langchain.vectorstores import Chroma
+from langchain.embeddings import OpenAIEmbeddings
+
+embeddings = OpenAIEmbeddings()
+vectorstore = Chroma(
+    embedding_function=embeddings,
+    persist_directory="./memory_db"
+)
+
+# Guardar información importante
+vectorstore.add_texts([
+    "El usuario prefiere respuestas técnicas detalladas",
+    "El usuario trabaja con Python y JavaScript",
+    "El usuario está interesado en seguridad web"
+])
+
+# Recuperar contexto relevante
+relevant_info = vectorstore.similarity_search(
+    "¿Qué lenguajes conoce el usuario?",
+    k=3
+)
+</code></pre>
+                            <pre class="tab-pane" id="js2"><code>// ✅ Implementando memoria en JavaScript
+
+class AgentMemory {
+    constructor() {
+        this.conversationHistory = [];
+        this.userPreferences = {};
+        this.longTermMemory = [];
+    }
+    
+    // Guardar mensaje en memoria
+    remember(message, role = 'user') {
+        this.conversationHistory.push({
+            role: role,
+            content: message,
+            timestamp: new Date().toISOString()
+        });
+        
+        // Mantener solo los últimos 10 mensajes
+        if (this.conversationHistory.length > 10) {
+            this.conversationHistory.shift();
+        }
+    }
+    
+    // Obtener contexto para el agente
+    getContext() {
+        return this.conversationHistory.map(msg => 
+            `${msg.role}: ${msg.content}`
+        ).join('\n');
+    }
+    
+    // Guardar preferencias del usuario
+    savePreference(key, value) {
+        this.userPreferences[key] = value;
+    }
+    
+    // Obtener preferencias
+    getPreference(key) {
+        return this.userPreferences[key] || null;
+    }
+    
+    // Buscar en memoria a largo plazo
+    searchMemory(query) {
+        return this.longTermMemory.filter(item => 
+            item.content.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+}
+
+// Uso del agente con memoria
+const memory = new AgentMemory();
+
+// Primera interacción
+memory.remember("Hola, me llamo Ana", 'user');
+memory.remember("¡Hola Ana! ¿En qué puedo ayudarte?", 'assistant');
+
+// Segunda interacción
+memory.remember("¿Cuál es mi nombre?", 'user');
+const context = memory.getContext();
+console.log(context);
+// Output:
+// user: Hola, me llamo Ana
+// assistant: ¡Hola Ana! ¿En qué puedo ayudarte?
+// user: ¿Cuál es mi nombre?
+
+// Guardar preferencias
+memory.savePreference('responseStyle', 'detallado');
+memory.savePreference('languages', ['Python', 'JavaScript']);
+
+console.log(memory.getPreference('languages'));
+// Output: ['Python', 'JavaScript']
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="takeaway">
+                    <h4>🔑 Lo que debes recordar:</h4>
+                    <ul>
+                        <li><strong>La memoria es esencial</strong> para conversaciones naturales</li>
+                        <li><strong>Usa memoria a corto plazo</strong> para la conversación actual</li>
+                        <li><strong>Usa memoria a largo plazo</strong> para información importante</li>
+                        <li><strong>LangChain</strong> facilita la implementación de memoria</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Regla 3: Herramientas y acciones -->
+        <section class="rule-card" data-level="intermediate">
+            <div class="rule-header">
+                <span class="rule-number">3</span>
+                <h3>🛠️ Las herramientas del agente: Manos para actuar</h3>
+                <span class="level-tag intermediate">Intermedio</span>
+            </div>
+            <div class="rule-content">
+                <div class="analogy">
+                    <h4>Imagina esto:</h4>
+                    <p>
+                        Un carpintero sin herramientas solo puede <strong>mirar</strong> la madera, 
+                        pero no puede <strong>cortarla, lijarla o ensamblarla</strong>.
+                    </p>
+                    <p>
+                        Un agente de IA sin herramientas solo puede <strong>hablar</strong>, 
+                        pero no puede <strong>enviar emails, buscar en internet o crear archivos</strong>.
+                    </p>
+                </div>
+
+                <div class="demo-section">
+                    <h4>🧪 Ejemplo: Agente con diferentes herramientas</h4>
+                    <p>Selecciona las herramientas que quieres darle a tu agente:</p>
+                    
+                    <div class="tools-selector">
+                        <div class="tool-card" onclick="toggleTool('email')">
+                            <input type="checkbox" id="toolEmail">
+                            <label for="toolEmail">
+                                <span class="tool-icon">📧</span>
+                                <span class="tool-name">Enviar emails</span>
+                            </label>
+                        </div>
+                        
+                        <div class="tool-card" onclick="toggleTool('search')">
+                            <input type="checkbox" id="toolSearch">
+                            <label for="toolSearch">
+                                <span class="tool-icon">🔍</span>
+                                <span class="tool-name">Buscar en web</span>
+                            </label>
+                        </div>
+                        
+                        <div class="tool-card" onclick="toggleTool('files')">
+                            <input type="checkbox" id="toolFiles">
+                            <label for="toolFiles">
+                                <span class="tool-icon">📁</span>
+                                <span class="tool-name">Gestionar archivos</span>
+                            </label>
+                        </div>
+                        
+                        <div class="tool-card" onclick="toggleTool('calendar')">
+                            <input type="checkbox" id="toolCalendar">
+                            <label for="toolCalendar">
+                                <span class="tool-icon">📅</span>
+                                <span class="tool-name">Gestionar calendario</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="agent-capabilities">
+                        <h5>Capacidades del agente:</h5>
+                        <div id="capabilitiesList" class="capabilities-list">
+                            <div class="capability disabled">Sin herramientas seleccionadas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <h4>En tu aplicación:</h4>
+                    <p>
+                        Define herramientas que tu agente pueda usar:
+                    </p>
+                    
+                    <div class="code-example">
+                        <div class="tabs">
+                            <button class="tab-btn active" data-tab="python3">Python (LangChain Tools)</button>
+                            <button class="tab-btn" data-tab="js3">JavaScript</button>
+                        </div>
+                        <div class="tab-content">
+                            <pre class="tab-pane active" id="python3"><code># ✅ Creando herramientas personalizadas
+
+from langchain.tools import Tool
+from langchain.agents import initialize_agent, AgentType
+from langchain.chat_models import ChatOpenAI
+
+# Herramienta 1: Buscar información
+def search_web(query):
+    """Busca información en internet"""
+    # Implementación real con API de búsqueda
+    return f"Resultados para: {query}"
+
+# Herramienta 2: Enviar email
+def send_email(recipient, subject, body):
+    """Envía un email"""
+    # Implementación real con SMTP
+    return f"Email enviado a {recipient} con asunto: {subject}"
+
+# Herramienta 3: Crear recordatorio
+def create_reminder(text, time):
+    """Crea un recordatorio"""
+    # Implementación real con base de datos
+    return f"Recordatorio creado: '{text}' para {time}"
+
+# Definir las herramientas
+tools = [
+    Tool(
+        name="Search",
+        func=search_web,
+        description="Útil para buscar información en internet"
+    ),
+    Tool(
+        name="SendEmail",
+        func=send_email,
+        description="Útil para enviar emails a destinatarios"
+    ),
+    Tool(
+        name="CreateReminder",
+        func=create_reminder,
+        description="Útil para crear recordatorios para el usuario"
+    )
+]
+
+# Crear el agente con herramientas
+llm = ChatOpenAI(temperature=0)
+agent = initialize_agent(
+    tools,
+    llm,
+    agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+    verbose=True
+)
+
+# El agente puede usar las herramientas automáticamente
+response = agent.run(
+    "Busca información sobre seguridad web y envíamela por email a ana@empresa.com"
+)
+print(response)
+
+
+# ✅ Ejemplo con tu aplicación QUBIZ
+def check_clickup_tasks():
+    """Verifica tareas pendientes en ClickUp"""
+    # Integración con ClickUp API
+    return "Tienes 3 tareas pendientes"
+
+def monitor_emails():
+    """Vigila nuevos emails importantes"""
+    # Integración con Gmail API
+    return "No hay emails urgentes"
+
+def search_patents(keyword):
+    """Busca nuevas patentes"""
+    # Integración con base de datos de patentes
+    return f"Se encontraron 5 nuevas patentes sobre {keyword}"
+
+# Agregar estas herramientas a tu agente QUBIZ
+qubiz_tools = [
+    Tool(name="CheckClickUp", func=check_clickup_tasks, description="Verifica tareas en ClickUp"),
+    Tool(name="MonitorEmails", func=monitor_emails, description="Vigila emails importantes"),
+    Tool(name="SearchPatents", func=search_patents, description="Busca patentes nuevas")
+]
+</code></pre>
+                            <pre class="tab-pane" id="js3"><code>// ✅ Creando herramientas personalizadas en JavaScript
+
+class AgentTools {
+    constructor() {
+        this.tools = {
+            searchWeb: this.searchWeb,
+            sendEmail: this.sendEmail,
+            createReminder: this.createReminder,
+            checkClickUp: this.checkClickUp,
+            monitorEmails: this.monitorEmails
+        };
+    }
+    
+    // Herramienta 1: Buscar información
+    async searchWeb(query) {
+        console.log(`🔍 Buscando: ${query}`);
+        // Implementación real con API
+        return `Resultados para: ${query}`;
+    }
+    
+    // Herramienta 2: Enviar email
+    async sendEmail(recipient, subject, body) {
+        console.log(`📧 Enviando email a: ${recipient}`);
+        // Implementación real con API de email
+        return `Email enviado a ${recipient}`;
+    }
+    
+    // Herramienta 3: Crear recordatorio
+    async createReminder(text, time) {
+        console.log(`⏰ Recordatorio: ${text} a las ${time}`);
+        // Implementación real
+        return `Recordatorio creado: ${text}`;
+    }
+    
+    // Herramienta 4: Verificar ClickUp (como en QUBIZ)
+    async checkClickUp() {
+        console.log('📋 Verificando tareas en ClickUp...');
+        // Integración con ClickUp API
+        return {
+            pendingTasks: 3,
+            urgentTasks: 1,
+            tasks: [
+                { id: 1, name: 'Revisar código', status: 'pendiente' },
+                { id: 2, name: 'Reunión equipo', status: 'hoy' }
+            ]
+        };
+    }
+    
+    // Herramienta 5: Vigilar emails (como en QUBIZ)
+    async monitorEmails() {
+        console.log('📧 Vigilando emails importantes...');
+        // Integración con Gmail API
+        return {
+            urgent: 0,
+            important: 2,
+            total: 5
+        };
+    }
+    
+    // Ejecutar herramienta por nombre
+    async useTool(toolName, ...args) {
+        const tool = this.tools[toolName];
+        if (!tool) {
+            throw new Error(`Herramienta no encontrada: ${toolName}`);
+        }
+        
+        return await tool.apply(this, args);
+    }
+}
+
+// Agente con herramientas
+class SmartAgent {
+    constructor() {
+        this.tools = new AgentTools();
+        this.memory = [];
+    }
+    
+    async run(task) {
+        console.log(`🤖 Agente recibiendo tarea: ${task}`);
+        
+        // Analizar la tarea y decidir qué herramienta usar
+        if (task.includes('buscar') || task.includes('search')) {
+            return await this.tools.useTool('searchWeb', task);
+        }
+        
+        if (task.includes('email') || task.includes('correo')) {
+            return await this.tools.useTool('sendEmail', 'destinatario@test.com', 'Asunto', 'Cuerpo');
+        }
+        
+        if (task.includes('tarea') || task.includes('clickup')) {
+            return await this.tools.useTool('checkClickUp');
+        }
+        
+        if (task.includes('vigilar') || task.includes('monitor')) {
+            return await this.tools.useTool('monitorEmails');
+        }
+        
+        return "No tengo una herramienta para esa tarea";
+    }
+}
+
+// Uso
+const agent = new SmartAgent();
+agent.run("Vigila mis emails importantes");
+agent.run("¿Qué tareas tengo pendientes en ClickUp?");
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="takeaway">
+                    <h4>🔑 Lo que debes recordar:</h4>
+                    <ul>
+                        <li><strong>Las herramientas extienden las capacidades</strong> del agente</li>
+                        <li><strong>Cada herramienta debe tener</strong> una función clara y bien definida</li>
+                        <li><strong>LangChain Tools</strong> facilita la creación de herramientas</li>
+                        <li><strong>Integra APIs existentes</strong> como herramientas (Gmail, ClickUp, etc.)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Regla 4: Multi-agentes y colaboración -->
+        <section class="rule-card" data-level="advanced">
+            <div class="rule-header">
+                <span class="rule-number">4</span>
+                <h3>👥 Equipo de agentes: Varios cerebros, un objetivo</h3>
+                <span class="level-tag advanced">Avanzado</span>
+            </div>
+            <div class="rule-content">
+                <div class="analogy">
+                    <h4>Imagina esto:</h4>
+                    <p>
+                        Una empresa no tiene un solo empleado que haga todo. 
+                        Tiene un <strong>equipo</strong>: ventas, marketing, desarrollo, soporte...
+                    </p>
+                    <p>
+                        Cada uno es experto en su área y <strong>colaboran</strong> para lograr el objetivo común.
+                    </p>
+                    <p>
+                        Lo mismo con agentes: puedes tener un <strong>equipo de agentes especializados</strong> trabajando juntos.
+                    </p>
+                </div>
+
+                <div class="demo-section">
+                    <h4>🧪 Ejemplo: Sistema QUBIZ con múltiples agentes</h4>
+                    <p>Tu aplicación QUBIZ es un perfecto ejemplo de multi-agentes:</p>
+                    
+                    <div class="multi-agent-diagram">
+                        <div class="agent-node coordinator">
+                            <div class="agent-icon">🧠</div>
+                            <div class="agent-name">Agente Coordinador</div>
+                            <div class="agent-role">Gestiona todas las solicitudes</div>
+                        </div>
+                        
+                        <div class="agent-connections">
+                            <div class="agent-node">
+                                <div class="agent-icon">📧</div>
+                                <div class="agent-name">Agente de Emails</div>
+                                <div class="agent-role">Vigila y clasifica emails</div>
+                            </div>
+                            
+                            <div class="agent-node">
+                                <div class="agent-icon">📋</div>
+                                <div class="agent-name">Agente de Tareas</div>
+                                <div class="agent-role">Gestiona ClickUp</div>
+                            </div>
+                            
+                            <div class="agent-node">
+                                <div class="agent-icon">🔍</div>
+                                <div class="agent-name">Agente de Búsqueda</div>
+                                <div class="agent-role">Busca patentes y subvenciones</div>
+                            </div>
+                            
+                            <div class="agent-node">
+                                <div class="agent-icon">💬</div>
+                                <div class="agent-name">Agente de Chat</div>
+                                <div class="agent-role">Responde preguntas del equipo</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qubiz-example">
+                        <h5>Caso práctico de QUBIZ:</h5>
+                        <p><strong>Escenario:</strong> Llega un email importante sobre una subvención</p>
+                        <ol>
+                            <li>📧 <strong>Agente de Emails</strong> detecta el email como prioritario</li>
+                            <li>🧠 <strong>Agente Coordinador</strong> decide qué hacer</li>
+                            <li>🔍 <strong>Agente de Búsqueda</strong> investiga más sobre la subvención</li>
+                            <li>📋 <strong>Agente de Tareas</strong> crea una tarea en ClickUp</li>
+                            <li>💬 <strong>Agente de Chat</strong> notifica al equipo</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <h4>En tu aplicación:</h4>
+                    <p>
+                        Implementa un sistema multi-agente:
+                    </p>
+                    
+                    <div class="code-example">
+                        <pre><code># ✅ Sistema multi-agente para QUBIZ
+
+from langchain.agents import AgentExecutor
+from langchain.chat_models import ChatOpenAI
+
+class QUBIZMultiAgentSystem:
+    def __init__(self):
+        self.llm = ChatOpenAI(temperature=0)
+        
+        # Crear agentes especializados
+        self.email_agent = self.create_email_agent()
+        self.task_agent = self.create_task_agent()
+        self.search_agent = self.create_search_agent()
+        self.chat_agent = self.create_chat_agent()
+        
+        # Agente coordinador
+        self.coordinator = self.create_coordinator()
+    
+    def create_email_agent(self):
+        """Agente especializado en gestión de emails"""
+        tools = [
+            Tool(name="CheckEmails", func=self.check_emails),
+            Tool(name="ClassifyEmail", func=self.classify_email),
+            Tool(name="SendNotification", func=self.send_notification)
+        ]
+        
+        return initialize_agent(
+            tools, self.llm,
+            agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+            verbose=True
+        )
+    
+    def create_task_agent(self):
+        """Agente especializado en gestión de tareas (ClickUp)"""
+        tools = [
+            Tool(name="GetTasks", func=self.get_clickup_tasks),
+            Tool(name="CreateTask", func=self.create_clickup_task),
+            Tool(name="UpdateTask", func=self.update_clickup_task)
+        ]
+        
+        return initialize_agent(
+            tools, self.llm,
+            agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+            verbose=True
+        )
+    
+    def process_request(self, user_request):
+        """Coordinador: decide qué agente debe manejar la solicitud"""
+        
+        # Analizar la solicitud
+        if any(word in user_request.lower() for word in ['email', 'correo', 'mail']):
+            return self.email_agent.run(user_request)
+        
+        elif any(word in user_request.lower() for word in ['tarea', 'task', 'clickup']):
+            return self.task_agent.run(user_request)
+        
+        elif any(word in user_request.lower() for word in ['buscar', 'search', 'patente']):
+            return self.search_agent.run(user_request)
+        
+        else:
+            return self.chat_agent.run(user_request)
+
+
+# Uso del sistema
+qubiz = QUBIZMultiAgentSystem()
+
+# El coordinador dirige automáticamente a cada agente especializado
+result1 = qubiz.process_request("¿Tengo emails importantes?")
+result2 = qubiz.process_request("Crea una tarea para revisar el código")
+result3 = qubiz.process_request("Busca subvenciones para IA")
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="takeaway">
+                    <h4>🔑 Lo que debes recordar:</h4>
+                    <ul>
+                        <li><strong>Divide y vencerás:</strong> Crea agentes especializados para cada tarea</li>
+                        <li><strong>Necesitas un coordinador</strong> que dirija el flujo de trabajo</li>
+                        <li><strong>Cada agente debe ser experto</strong> en su dominio específico</li>
+                        <li><strong>Tu QUBIZ es un ejemplo perfecto</strong> de sistema multi-agente</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Checklist Final -->
+        <section class="checklist-section">
+            <h2>✅ Checklist para crear tu Agente de IA</h2>
+            <p>Antes de empezar, revisa esta lista:</p>
+            
+            <div class="checklist-grid">
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1">
+                    <label for="check1">Define el ciclo Pensar → Decidir → Actuar</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2">
+                    <label for="check2">Implementa memoria (corto y largo plazo)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3">
+                    <label for="check3">Crea herramientas específicas para tu agente</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check4">
+                    <label for="check4">Integra APIs externas como herramientas</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check5">
+                    <label for="check5">Define el contexto y personalidad del agente</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check6">
+                    <label for="check6">Implementa logging para depurar el agente</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check7">
+                    <label for="check7">Prueba el agente con casos de uso reales</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check8">
+                    <label for="check8">Considera un sistema multi-agente si es complejo</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Consejos Finales -->
+        <section class="tips-section">
+            <h2>💡 Consejos para tu Bootcamp</h2>
+            
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h4>📚 Herramientas Recomendadas</h4>
+                    <ul>
+                        <li><strong>Python:</strong> LangChain, LlamaIndex, AutoGen</li>
+                        <li><strong>JavaScript:</strong> LangChain.js, Semantic Kernel</li>
+                        <li><strong>Frameworks:</strong> CrewAI (multi-agentes), LangGraph</li>
+                    </ul>
+                </div>
+                
+                <div class="tip-card">
+                    <h4>🚀 Para tu proyecto QUBIZ</h4>
+                    <ul>
+                        <li>Usa <strong>Gemini 1.5 Pro</strong> para contexto largo (documentos)</li>
+                        <li>Implementa <strong>RAG</strong> para chat con documentos</li>
+                        <li>Crea <strong>agentes especializados</strong> por funcionalidad</li>
+                        <li>Añade <strong>memoria vectorial</strong> para recordar preferencias</li>
+                    </ul>
+                </div>
+                
+                <div class="tip-card">
+                    <h4>🎯 Buenas Prácticas</h4>
+                    <ul>
+                        <li>Empieza con un <strong>agente simple</strong> y ve añadiendo complejidad</li>
+                        <li>Define <strong>límites claros</strong> de lo que puede hacer el agente</li>
+                        <li>Implementa <strong>logging detallado</strong> para debuggear</li>
+                        <li>Prueba siempre con <strong>datos reales</strong> de tus usuarios</li>
+                    </ul>
+                </div>
+                
+                <div class="tip-card">
+                    <h4>🎓 Para Seguir Aprendiendo</h4>
+                    <ul>
+                        <li>LangChain Documentation (oficial)</li>
+                        <li>AutoGen de Microsoft (multi-agentes)</li>
+                        <li>Papers sobre Agent Frameworks</li>
+                        <li>Comunidad de LangChain en Discord</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>🤖 Agentes de IA para Humanos - Bootcamp Full Stack</p>
+            <p class="small">Recuerda: un buen agente es como un buen asistente: entiende, decide y actúa</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
