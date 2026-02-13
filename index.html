@@ -284,8 +284,10 @@ agent.run(newEmail);
                             <div class="chat-box" id="chatNoMemory">
                                 <div class="chat-message assistant">Hola, ¿en qué puedo ayudarte?</div>
                             </div>
-                            <input type="text" id="inputNoMemory" placeholder="Escribe tu mensaje...">
-                            <button class="btn-small" id="sendNoMemory">Enviar</button>
+                            <div class="chat-input-row">
+                                <input type="text" id="inputNoMemory" placeholder="Escribe tu mensaje...">
+                                <button class="btn-small" id="sendNoMemory">Enviar</button>
+                            </div>
                         </div>
                         
                         <div class="memory-column">
@@ -293,8 +295,10 @@ agent.run(newEmail);
                             <div class="chat-box" id="chatWithMemory">
                                 <div class="chat-message assistant">Hola, ¿en qué puedo ayudarte?</div>
                             </div>
-                            <input type="text" id="inputWithMemory" placeholder="Escribe tu mensaje...">
-                            <button class="btn-small safe" id="sendWithMemory">Enviar</button>
+                            <div class="chat-input-row">
+                                <input type="text" id="inputWithMemory" placeholder="Escribe tu mensaje...">
+                                <button class="btn-small safe" id="sendWithMemory">Enviar</button>
+                            </div>
                         </div>
                     </div>
                     
@@ -496,34 +500,35 @@ console.log(memory.getPreference('languages'));
                     <h4>🧪 Ejemplo: Agente con diferentes herramientas</h4>
                     <p>Selecciona las herramientas que quieres darle a tu agente:</p>
                     
+                    <!-- FIXED: IDs changed to demoTool* to avoid conflict with Rule 6 -->
                     <div class="tools-selector">
-                        <div class="tool-card" onclick="toggleTool('email')">
-                            <input type="checkbox" id="toolEmail">
-                            <label for="toolEmail">
+                        <div class="tool-card" data-tool="email">
+                            <input type="checkbox" id="demoToolEmail">
+                            <label for="demoToolEmail">
                                 <span class="tool-icon">📧</span>
                                 <span class="tool-name">Enviar emails</span>
                             </label>
                         </div>
                         
-                        <div class="tool-card" onclick="toggleTool('search')">
-                            <input type="checkbox" id="toolSearch">
-                            <label for="toolSearch">
+                        <div class="tool-card" data-tool="search">
+                            <input type="checkbox" id="demoToolSearch">
+                            <label for="demoToolSearch">
                                 <span class="tool-icon">🔍</span>
                                 <span class="tool-name">Buscar en web</span>
                             </label>
                         </div>
                         
-                        <div class="tool-card" onclick="toggleTool('files')">
-                            <input type="checkbox" id="toolFiles">
-                            <label for="toolFiles">
+                        <div class="tool-card" data-tool="files">
+                            <input type="checkbox" id="demoToolFiles">
+                            <label for="demoToolFiles">
                                 <span class="tool-icon">📁</span>
                                 <span class="tool-name">Gestionar archivos</span>
                             </label>
                         </div>
                         
-                        <div class="tool-card" onclick="toggleTool('calendar')">
-                            <input type="checkbox" id="toolCalendar">
-                            <label for="toolCalendar">
+                        <div class="tool-card" data-tool="calendar">
+                            <input type="checkbox" id="demoToolCalendar">
+                            <label for="demoToolCalendar">
                                 <span class="tool-icon">📅</span>
                                 <span class="tool-name">Gestionar calendario</span>
                             </label>
@@ -1102,7 +1107,7 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
                         <div class="form-group">
                             <label>Personalidad del agente</label>
                             <div class="personality-selector">
-                                <div class="personality-option" data-value="formal">
+                                <div class="personality-option active" data-value="formal">
                                     <input type="radio" id="formal" name="personality" value="formal" checked>
                                     <label for="formal">
                                         <span class="personality-icon">👔</span>
@@ -1142,50 +1147,51 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
                         
                         <div class="form-group">
                             <label>Herramientas disponibles</label>
+                            <!-- FIXED: IDs use builder* prefix to avoid conflicts -->
                             <div class="tools-checkbox-grid">
-                                <div class="tool-checkbox">
-                                    <input type="checkbox" id="toolEmail" checked>
-                                    <label for="toolEmail">
+                                <div class="tool-checkbox checked">
+                                    <input type="checkbox" id="builderToolEmail" checked>
+                                    <label for="builderToolEmail">
                                         <span class="tool-icon">📧</span>
                                         <span class="tool-name">Enviar emails</span>
                                     </label>
                                 </div>
                                 
-                                <div class="tool-checkbox">
-                                    <input type="checkbox" id="toolSearch" checked>
-                                    <label for="toolSearch">
+                                <div class="tool-checkbox checked">
+                                    <input type="checkbox" id="builderToolSearch" checked>
+                                    <label for="builderToolSearch">
                                         <span class="tool-icon">🔍</span>
                                         <span class="tool-name">Buscar en web</span>
                                     </label>
                                 </div>
                                 
                                 <div class="tool-checkbox">
-                                    <input type="checkbox" id="toolFiles">
-                                    <label for="toolFiles">
+                                    <input type="checkbox" id="builderToolFiles">
+                                    <label for="builderToolFiles">
                                         <span class="tool-icon">📁</span>
                                         <span class="tool-name">Gestionar archivos</span>
                                     </label>
                                 </div>
                                 
                                 <div class="tool-checkbox">
-                                    <input type="checkbox" id="toolCalendar">
-                                    <label for="toolCalendar">
+                                    <input type="checkbox" id="builderToolCalendar">
+                                    <label for="builderToolCalendar">
                                         <span class="tool-icon">📅</span>
                                         <span class="tool-name">Calendario</span>
                                     </label>
                                 </div>
                                 
                                 <div class="tool-checkbox">
-                                    <input type="checkbox" id="toolApi">
-                                    <label for="toolApi">
+                                    <input type="checkbox" id="builderToolApi">
+                                    <label for="builderToolApi">
                                         <span class="tool-icon">🔌</span>
                                         <span class="tool-name">APIs externas</span>
                                     </label>
                                 </div>
                                 
                                 <div class="tool-checkbox">
-                                    <input type="checkbox" id="toolDb">
-                                    <label for="toolDb">
+                                    <input type="checkbox" id="builderToolDb">
+                                    <label for="builderToolDb">
                                         <span class="tool-icon">🗄️</span>
                                         <span class="tool-name">Base de datos</span>
                                     </label>
@@ -1211,8 +1217,10 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
                         <div class="code-display-container">
                             <pre id="generatedCode"><code># El código aparecerá aquí...</code></pre>
                         </div>
-                        <button class="btn-small" id="copyCodeBtn">📋 Copiar código</button>
-                        <button class="btn-small" id="downloadCodeBtn">📥 Descargar como archivo</button>
+                        <div class="code-actions">
+                            <button class="btn-small" id="copyCodeBtn">📋 Copiar código</button>
+                            <button class="btn-small" id="downloadCodeBtn">📥 Descargar como archivo</button>
+                        </div>
                     </div>
 
                     <div class="agent-preview">
@@ -1229,8 +1237,8 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
                                 Gestionar emails importantes y buscar información relevante
                             </div>
                             <div class="preview-tools" id="previewTools">
-                                <span class="tool-badge">📧 Email</span>
-                                <span class="tool-badge">🔍 Búsqueda</span>
+                                <span class="tool-badge">📧 Enviar emails</span>
+                                <span class="tool-badge">🔍 Buscar en web</span>
                             </div>
                         </div>
                     </div>
