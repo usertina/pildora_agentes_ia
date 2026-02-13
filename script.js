@@ -106,57 +106,58 @@ document.addEventListener('DOMContentLoaded', () => {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // ===== DEMO 3: Selector de herramientas =====
+    // ===== DEMO 3: Selector de herramientas (Rule 3) =====
+    // FIXED: Uses data-tool attribute instead of conflicting IDs
     const capabilitiesList = document.getElementById('capabilitiesList');
-    const selectedTools = new Set();
+    const demoToolCards = document.querySelectorAll('.tools-selector .tool-card');
 
-    window.toggleTool = function(toolName) {
-        const checkbox = document.getElementById(`tool${toolName.charAt(0).toUpperCase() + toolName.slice(1)}`);
-        if (!checkbox) return;
-        
-        checkbox.checked = !checkbox.checked;
-        
-        if (checkbox.checked) {
-            selectedTools.add(toolName);
-        } else {
-            selectedTools.delete(toolName);
-        }
-
-        updateCapabilities();
-    };
+    demoToolCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            // Only toggle if the click wasn't directly on the checkbox (label click already toggles it)
+            if (e.target !== checkbox) {
+                checkbox.checked = !checkbox.checked;
+            }
+            updateCapabilities();
+        });
+    });
 
     function updateCapabilities() {
         if (!capabilitiesList) return;
         
         capabilitiesList.innerHTML = '';
 
-        if (selectedTools.size === 0) {
+        const descriptions = {
+            'email': '📧 Puede enviar y recibir emails',
+            'search': '🔍 Puede buscar información en internet',
+            'files': '📁 Puede crear, leer y modificar archivos',
+            'calendar': '📅 Puede gestionar eventos y recordatorios'
+        };
+
+        let hasSelected = false;
+
+        demoToolCards.forEach(card => {
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            const toolName = card.getAttribute('data-tool');
+            
+            if (checkbox && checkbox.checked && toolName) {
+                hasSelected = true;
+                const item = document.createElement('div');
+                item.className = 'capability enabled';
+                item.textContent = descriptions[toolName] || `✅ Herramienta: ${toolName}`;
+                capabilitiesList.appendChild(item);
+            }
+        });
+
+        if (!hasSelected) {
             const item = document.createElement('div');
             item.className = 'capability disabled';
             item.textContent = 'Sin herramientas seleccionadas';
             capabilitiesList.appendChild(item);
-            return;
         }
-
-        selectedTools.forEach(tool => {
-            const item = document.createElement('div');
-            item.className = 'capability enabled';
-            
-            const descriptions = {
-                'email': '📧 Puede enviar y recibir emails',
-                'search': '🔍 Puede buscar información en internet',
-                'files': '📁 Puede crear, leer y modificar archivos',
-                'calendar': '📅 Puede gestionar eventos y recordatorios',
-                'api': '🔌 Puede conectar con APIs externas',
-                'db': '🗄️ Puede acceder a bases de datos'
-            };
-
-            item.textContent = descriptions[tool] || `✅ Herramienta: ${tool}`;
-            capabilitiesList.appendChild(item);
-        });
     }
 
-    // ===== AGENT BUILDER INTERACTIVO =====
+    // ===== AGENT BUILDER INTERACTIVO (Rule 6) =====
     // Actualizar vista previa del nombre
     const agentNameInput = document.getElementById('agentName');
     const previewName = document.getElementById('previewName');
@@ -173,6 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     personalityOptions.forEach(option => {
         option.addEventListener('click', () => {
+            // Also check the radio inside
+            const radio = option.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+            
             personalityOptions.forEach(opt => opt.classList.remove('active'));
             option.classList.add('active');
             
@@ -200,15 +205,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Actualizar vista previa de herramientas
-    const toolCheckboxes = document.querySelectorAll('.tool-checkbox input[type="checkbox"]');
+    // Actualizar vista previa de herramientas (Rule 6 builder)
+    // FIXED: Scoped to .tools-checkbox-grid only, no more conflicting IDs
+    const builderToolCheckboxes = document.querySelectorAll('.tools-checkbox-grid .tool-checkbox');
     const previewTools = document.getElementById('previewTools');
     
-    toolCheckboxes.forEach(checkbox => {
-        const toolCheckbox = checkbox.closest('.tool-checkbox');
-        if (!toolCheckbox) return;
+    builderToolCheckboxes.forEach(toolCheckbox => {
+        const checkbox = toolCheckbox.querySelector('input[type="checkbox"]');
+        if (!checkbox) return;
         
         toolCheckbox.addEventListener('click', (e) => {
+            // Only toggle if click wasn't directly on the checkbox
             if (e.target !== checkbox) {
                 checkbox.checked = !checkbox.checked;
             }
@@ -221,19 +228,18 @@ document.addEventListener('DOMContentLoaded', () => {
             
             updatePreviewTools();
         });
-        
-        checkbox.addEventListener('change', updatePreviewTools);
     });
     
     function updatePreviewTools() {
         if (!previewTools) return;
         
         const selectedTools = [];
-        toolCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
+        builderToolCheckboxes.forEach(toolCheckbox => {
+            const checkbox = toolCheckbox.querySelector('input[type="checkbox"]');
+            if (checkbox && checkbox.checked) {
                 const label = checkbox.nextElementSibling;
-                const toolName = label.querySelector('.tool-name')?.textContent || '';
-                const toolIcon = label.querySelector('.tool-icon')?.textContent || '';
+                const toolName = label ? label.querySelector('.tool-name')?.textContent : '';
+                const toolIcon = label ? label.querySelector('.tool-icon')?.textContent : '';
                 if (toolName) selectedTools.push({ icon: toolIcon, name: toolName });
             }
         });
@@ -245,6 +251,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 `<span class="tool-badge">${tool.icon} ${tool.name}</span>`
             ).join('');
         }
+    }
+    
+    // Helper: get selected builder tools
+    function getSelectedBuilderTools() {
+        const tools = [];
+        builderToolCheckboxes.forEach(toolCheckbox => {
+            const checkbox = toolCheckbox.querySelector('input[type="checkbox"]');
+            if (checkbox && checkbox.checked) {
+                const label = checkbox.nextElementSibling;
+                const toolName = label ? label.querySelector('.tool-name')?.textContent : '';
+                if (toolName) tools.push(toolName);
+            }
+        });
+        return tools;
     }
     
     // Generar código del agente
@@ -261,13 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const personality = personalityElement?.value || 'formal';
             const purpose = (document.getElementById('agentPurpose')?.value || 'Gestionar emails importantes y buscar información relevante').trim() || 'Sin propósito definido';
             
-            // Obtener herramientas seleccionadas
-            const tools = [];
-            document.querySelectorAll('.tool-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
-                const label = checkbox.nextElementSibling;
-                const toolName = label.querySelector('.tool-name')?.textContent || '';
-                if (toolName) tools.push(toolName);
-            });
+            const tools = getSelectedBuilderTools();
             
             // Generar código Python por defecto
             const pythonCode = generatePythonCode(agentName, personality, purpose, tools);
@@ -295,12 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const personality = personalityElement?.value || 'formal';
             const purpose = (document.getElementById('agentPurpose')?.value || 'Gestionar emails importantes y buscar información relevante').trim() || 'Sin propósito definido';
             
-            const tools = [];
-            document.querySelectorAll('.tool-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
-                const label = checkbox.nextElementSibling;
-                const toolName = label.querySelector('.tool-name')?.textContent || '';
-                if (toolName) tools.push(toolName);
-            });
+            const tools = getSelectedBuilderTools();
             
             let code = '';
             if (lang === 'python') {
@@ -403,12 +412,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.setAttribute('data-theme', theme);
             localStorage.setItem('aiPillTheme', theme);
             
-            // Forzar actualización de estilos en bloques de código
-            document.querySelectorAll('.code-example, .code-display-container').forEach(el => {
-                el.style.display = 'none';
-                setTimeout(() => { el.style.display = 'block'; }, 10);
-            });
-            
             showAlert(`🎨 Tema "${theme}" aplicado`, 'success');
         });
     });
@@ -463,12 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.size-btn[data-size="normal"]')?.classList.add('active');
             
-            // Forzar actualización de estilos en bloques de código
-            document.querySelectorAll('.code-example, .code-display-container').forEach(el => {
-                el.style.display = 'none';
-                setTimeout(() => { el.style.display = 'block'; }, 10);
-            });
-            
             showAlert('↺ Ajustes restablecidos correctamente', 'success');
         });
     }
@@ -481,6 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedTheme) {
         document.body.setAttribute('data-theme', savedTheme);
         document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.classList.remove('active');
             if (btn.getAttribute('data-theme') === savedTheme) {
                 btn.classList.add('active');
             }
@@ -490,6 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedFont) {
         document.body.setAttribute('data-font', savedFont);
         document.querySelectorAll('.font-btn').forEach(btn => {
+            btn.classList.remove('active');
             if (btn.getAttribute('data-font') === savedFont) {
                 btn.classList.add('active');
             }
@@ -499,6 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedSize) {
         document.body.setAttribute('data-size', savedSize);
         document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.classList.remove('active');
             if (btn.getAttribute('data-size') === savedSize) {
                 btn.classList.add('active');
             }
@@ -509,7 +509,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function actualizarRelojBilbao() {
         const ahora = new Date();
         
-        // Formatear hora (24h) con zona horaria de España
         const hora = ahora.toLocaleTimeString('es-ES', {
             timeZone: 'Europe/Madrid',
             hour: '2-digit',
@@ -518,7 +517,6 @@ document.addEventListener('DOMContentLoaded', () => {
             hour12: false
         });
         
-        // Formatear fecha (día/mes/año)
         const fecha = ahora.toLocaleDateString('es-ES', {
             timeZone: 'Europe/Madrid',
             day: '2-digit',
@@ -526,7 +524,6 @@ document.addEventListener('DOMContentLoaded', () => {
             year: 'numeric'
         });
 
-        // Actualizar elementos del footer
         const horaElement = document.getElementById('bilbaoTimeFooter');
         const fechaElement = document.getElementById('bilbaoDateFooter');
         
@@ -534,10 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fechaElement) fechaElement.textContent = fecha;
     }
 
-    // Actualizar inmediatamente al cargar
     actualizarRelojBilbao();
-
-    // Actualizar cada segundo
     setInterval(actualizarRelojBilbao, 1000);
 
     // ===== TABS FUNCTIONALITY (para ejemplos de código) =====
@@ -846,7 +840,7 @@ function showAlert(message, type) {
         color: white;
         font-weight: bold;
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        z-index: 1000;
+        z-index: 10000;
         animation: slideIn 0.3s ease;
         margin-bottom: 10px;
     `;
@@ -879,10 +873,6 @@ style.textContent = `
     @keyframes slideOut {
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(400px); opacity: 0; }
-    }
-    
-    .alert-toast {
-        margin-bottom: 10px !important;
     }
 `;
 document.head.appendChild(style);
