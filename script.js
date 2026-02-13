@@ -618,3 +618,164 @@ async function runAgent() {
 runAgent().catch(console.error);
 `;
 }
+// ===== SETTINGS WHEEL FUNCTIONALITY =====
+document.addEventListener('DOMContentLoaded', () => {
+    const settingsWheel = document.getElementById('settingsWheel');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const closeSettings = document.getElementById('closeSettings');
+    const notificationsToggle = document.getElementById('notificationsToggle');
+    const resetSettingsBtn = document.getElementById('resetSettings');
+
+    // Abrir/cerrar panel de ajustes
+    if (settingsWheel && settingsPanel) {
+        settingsWheel.addEventListener('click', () => {
+            settingsPanel.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Evita scroll al abrir panel
+        });
+
+        closeSettings.addEventListener('click', () => {
+            settingsPanel.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        // Cerrar al hacer clic fuera del panel
+        document.addEventListener('click', (e) => {
+            if (settingsPanel.classList.contains('active') && 
+                !settingsPanel.contains(e.target) && 
+                !settingsWheel.contains(e.target)) {
+                settingsPanel.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // Cambiar tema
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Quitar clase active de todos
+            document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Aplicar tema
+            const theme = btn.getAttribute('data-theme');
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('aiPillTheme', theme);
+            
+            // Mostrar notificación
+            if (notificationsToggle.checked) {
+                showAlert(`🎨 Tema "${theme}" aplicado`, 'success');
+            }
+        });
+    });
+
+    // Cambiar densidad
+    document.querySelectorAll('.density-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const density = btn.getAttribute('data-density');
+            document.body.setAttribute('data-density', density);
+            localStorage.setItem('aiPillDensity', density);
+            
+            if (notificationsToggle.checked) {
+                showAlert(`📊 Vista "${density}" aplicada`, 'success');
+            }
+        });
+    });
+
+    // Guardar estado de notificaciones
+    if (notificationsToggle) {
+        notificationsToggle.addEventListener('change', () => {
+            localStorage.setItem('aiPillNotifications', notificationsToggle.checked);
+        });
+    }
+
+    // Reset de ajustes
+    if (resetSettingsBtn) {
+        resetSettingsBtn.addEventListener('click', () => {
+            // Resetear valores
+            localStorage.removeItem('aiPillTheme');
+            localStorage.removeItem('aiPillDensity');
+            localStorage.removeItem('aiPillNotifications');
+            
+            // Aplicar valores por defecto
+            document.body.removeAttribute('data-theme');
+            document.body.removeAttribute('data-density');
+            if (notificationsToggle) notificationsToggle.checked = true;
+            
+            // Actualizar UI
+            document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.theme-btn[data-theme="default"]').classList.add('active');
+            
+            document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.density-btn[data-density="normal"]').classList.add('active');
+            
+            showAlert('↺ Ajustes restablecidos correctamente', 'success');
+        });
+    }
+
+    // Cargar ajustes guardados
+    const savedTheme = localStorage.getItem('aiPillTheme');
+    const savedDensity = localStorage.getItem('aiPillDensity');
+    const savedNotifications = localStorage.getItem('aiPillNotifications');
+    
+    if (savedTheme) {
+        document.body.setAttribute('data-theme', savedTheme);
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            if (btn.getAttribute('data-theme') === savedTheme) {
+                btn.classList.add('active');
+            }
+        });
+    }
+    
+    if (savedDensity) {
+        document.body.setAttribute('data-density', savedDensity);
+        document.querySelectorAll('.density-btn').forEach(btn => {
+            if (btn.getAttribute('data-density') === savedDensity) {
+                btn.classList.add('active');
+            }
+        });
+    }
+    
+    if (savedNotifications !== null && notificationsToggle) {
+        notificationsToggle.checked = savedNotifications === 'true';
+    }
+
+    // ===== RELOJ DE BILBAO =====
+    function actualizarRelojBilbao() {
+        const ahora = new Date();
+        
+        // Formatear hora (24h) con zona horaria de España
+        const hora = ahora.toLocaleTimeString('es-ES', {
+            timeZone: 'Europe/Madrid',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+        
+        // Formatear fecha (día/mes/año)
+        const fecha = ahora.toLocaleDateString('es-ES', {
+            timeZone: 'Europe/Madrid',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+
+        // Actualizar elementos del footer
+        const horaElement = document.getElementById('bilbaoTimeFooter');
+        const fechaElement = document.getElementById('bilbaoDateFooter');
+        
+        if (horaElement) horaElement.textContent = hora;
+        if (fechaElement) fechaElement.textContent = fecha;
+    }
+
+    // Actualizar inmediatamente al cargar
+    actualizarRelojBilbao();
+
+    // Actualizar cada segundo
+    setInterval(actualizarRelojBilbao, 1000);
+    
+    console.log('⚙️ Panel de ajustes y reloj de Bilbao cargados correctamente');
+});
