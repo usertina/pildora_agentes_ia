@@ -161,7 +161,7 @@ class EmailAgent:
 
 # Uso del agente
 agent = EmailAgent()
-new_email = Email(sender="cliente@empresa.com", subject="URGENTE: Problema crítico")
+new_email = Email(sender="<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="593a35303c372d3c193c34292b3c2a38773a3634">[email&#160;protected]</a>", subject="URGENTE: Problema crítico")
 agent.run(new_email)
 </code></pre>
                             <pre class="tab-pane" id="js1"><code>// ✅ Componentes básicos de un agente
@@ -234,7 +234,7 @@ class EmailAgent {
 // Uso del agente
 const agent = new EmailAgent();
 const newEmail = {
-    sender: 'cliente@empresa.com',
+    sender: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0566696c606b716045606875776076642b666a68">[email&#160;protected]</a>',
     subject: 'URGENTE: Problema crítico'
 };
 agent.run(newEmail);
@@ -609,7 +609,7 @@ agent = initialize_agent(
 
 # El agente puede usar las herramientas automáticamente
 response = agent.run(
-    "Busca información sobre seguridad web y envíamela por email a ana@empresa.com"
+    "Busca información sobre seguridad web y envíamela por email a <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b5d4dbd4f5d0d8c5c7d0c6d49bd6dad8">[email&#160;protected]</a>"
 )
 print(response)
 
@@ -723,7 +723,7 @@ class SmartAgent {
         }
         
         if (task.includes('email') || task.includes('correo')) {
-            return await this.tools.useTool('sendEmail', 'destinatario@test.com', 'Asunto', 'Cuerpo');
+            return await this.tools.useTool('sendEmail', '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d6b2b3a5a2bfb8b7a2b7a4bfb996a2b3a5a2f8b5b9bb">[email&#160;protected]</a>', 'Asunto', 'Cuerpo');
         }
         
         if (task.includes('tarea') || task.includes('clickup')) {
@@ -1357,7 +1357,7 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
         </div>
         <div class="settings-content">
             <div class="setting-group">
-                <label>🎨 Tema Visual</label>
+                <label>🎨 Tema del Código</label>
                 <div class="theme-options">
                     <button class="theme-btn active" data-theme="default">Por defecto</button>
                     <button class="theme-btn" data-theme="dark">Oscuro</button>
@@ -1420,14 +1420,23 @@ result3 = qubiz.process_request("Busca subvenciones para IA")
             </div>
 
             <div class="company-logo-section">
+
                 <p class="company-label">para el Bootcamp Full Stack de</p>
+
                 <a href="https://www.linkedin.com/company/grupo-peñascal/posts/?feedView=all" target="_blank" rel="noopener noreferrer" class="company-logo-link">
+
                     <img src="images/penascal-logo.png" alt="Peñascal Koop Logo" class="company-logo">
+
                 </a>
+
             </div>
+
         </div>
+
     </footer>
 
     <script src="script.js"></script>
+
 </body>
+
 </html>
