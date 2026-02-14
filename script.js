@@ -1,62 +1,108 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ============================================
-    // AUTO-ADD COPY BUTTONS TO ALL CODE BLOCKS
+    // AUTO-ADD COPY + DOWNLOAD BUTTONS TO ALL CODE BLOCKS
     // ============================================
-    document.querySelectorAll('.code-example').forEach(codeExample => {
-        const btn = document.createElement('button');
-        btn.className = 'code-copy-btn';
-        btn.textContent = '📋 Copiar';
-        btn.addEventListener('click', () => {
-            // Get the currently visible tab-pane, or fall back to the first pre
-            const activePane = codeExample.querySelector('.tab-pane.active code') 
-                            || codeExample.querySelector('pre code')
-                            || codeExample.querySelector('code');
-            if (!activePane) return;
-            
-            const text = activePane.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                btn.textContent = '✓ ¡Copiado!';
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.textContent = '📋 Copiar';
-                    btn.classList.remove('copied');
-                }, 2000);
-            }).catch(() => {
-                // Fallback for older browsers
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                btn.textContent = '✓ ¡Copiado!';
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.textContent = '📋 Copiar';
-                    btn.classList.remove('copied');
-                }, 2000);
-            });
+    
+    function getVisibleCode(container) {
+        // Get code from active tab pane, or first pre/code
+        const activePane = container.querySelector('.tab-pane.active code')
+                        || container.querySelector('.tab-pane.active')
+                        || container.querySelector('pre code')
+                        || container.querySelector('code');
+        return activePane ? activePane.textContent : '';
+    }
+    
+    function getActiveLang(container) {
+        const activeTab = container.querySelector('.tab-btn.active') || container.querySelector('.code-tab-btn.active');
+        if (!activeTab) return 'python';
+        const text = activeTab.textContent.toLowerCase();
+        if (text.includes('javascript') || text.includes('js')) return 'javascript';
+        return 'python';
+    }
+    
+    function copyCode(container, btn) {
+        const text = getVisibleCode(container);
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = '✓ Copiado';
+            btn.classList.add('success');
+            setTimeout(() => { btn.textContent = '📋 Copiar'; btn.classList.remove('success'); }, 2000);
+        }).catch(() => {
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            btn.textContent = '✓ Copiado';
+            btn.classList.add('success');
+            setTimeout(() => { btn.textContent = '📋 Copiar'; btn.classList.remove('success'); }, 2000);
         });
-        codeExample.appendChild(btn);
+    }
+    
+    function downloadCode(container, btn) {
+        const text = getVisibleCode(container);
+        if (!text) return;
+        const lang = getActiveLang(container);
+        const ext = lang === 'javascript' ? 'js' : 'py';
+        const filename = `codigo_agente.${ext}`;
+        
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        btn.textContent = '✓ Descargado';
+        btn.classList.add('success');
+        setTimeout(() => { btn.textContent = '📥 Descargar'; btn.classList.remove('success'); }, 2000);
+    }
+    
+    // Add buttons to all .code-example blocks
+    document.querySelectorAll('.code-example').forEach(codeExample => {
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'code-action-buttons';
+        
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'code-action-btn';
+        copyBtn.textContent = '📋 Copiar';
+        copyBtn.addEventListener('click', () => copyCode(codeExample, copyBtn));
+        
+        const dlBtn = document.createElement('button');
+        dlBtn.className = 'code-action-btn';
+        dlBtn.textContent = '📥 Descargar';
+        dlBtn.addEventListener('click', () => downloadCode(codeExample, dlBtn));
+        
+        btnGroup.appendChild(copyBtn);
+        btnGroup.appendChild(dlBtn);
+        codeExample.appendChild(btnGroup);
     });
 
-    // Also add to generated code container
+    // Add buttons to generated code container too
     const codeDisplayContainer = document.querySelector('.code-display-container');
-    if (codeDisplayContainer && !codeDisplayContainer.querySelector('.code-copy-btn')) {
-        const btn = document.createElement('button');
-        btn.className = 'code-copy-btn';
-        btn.textContent = '📋 Copiar';
-        btn.addEventListener('click', () => {
-            const code = codeDisplayContainer.querySelector('code');
-            if (!code) return;
-            navigator.clipboard.writeText(code.textContent).then(() => {
-                btn.textContent = '✓ ¡Copiado!';
-                btn.classList.add('copied');
-                setTimeout(() => { btn.textContent = '📋 Copiar'; btn.classList.remove('copied'); }, 2000);
-            });
-        });
-        codeDisplayContainer.appendChild(btn);
+    if (codeDisplayContainer && !codeDisplayContainer.querySelector('.code-action-buttons')) {
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'code-action-buttons';
+        
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'code-action-btn';
+        copyBtn.textContent = '📋 Copiar';
+        copyBtn.addEventListener('click', () => copyCode(codeDisplayContainer, copyBtn));
+        
+        const dlBtn = document.createElement('button');
+        dlBtn.className = 'code-action-btn';
+        dlBtn.textContent = '📥 Descargar';
+        dlBtn.addEventListener('click', () => downloadCode(codeDisplayContainer, dlBtn));
+        
+        btnGroup.appendChild(copyBtn);
+        btnGroup.appendChild(dlBtn);
+        codeDisplayContainer.appendChild(btnGroup);
     }
 
     // ============================================
@@ -123,18 +169,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (sendWithMemory && chatWithMemory && inputWithMemory) {
         let conversationHistory = [];
-
         sendWithMemory.addEventListener('click', () => {
             const message = inputWithMemory.value.trim();
             if (!message) return;
             addMessage(chatWithMemory, message, 'user');
             conversationHistory.push({ role: 'user', content: message });
             inputWithMemory.value = '';
-
             setTimeout(() => {
                 let response;
                 const context = conversationHistory.slice(-3).map(m => m.content).join(' ');
-                
                 if (context.toLowerCase().includes('nombre') || context.toLowerCase().includes('cómo te llamas')) {
                     response = 'Me llamo QUBIZ, soy tu asistente de IA. ¿En qué más puedo ayudarte?';
                 } else if (context.toLowerCase().includes('adiós') || context.toLowerCase().includes('hasta luego')) {
@@ -144,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     response = 'Entendido. ¿Algo más en lo que pueda ayudarte?';
                 }
-
                 addMessage(chatWithMemory, response, 'assistant');
                 conversationHistory.push({ role: 'assistant', content: response });
             }, 800);
@@ -170,9 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     demoToolCards.forEach(card => {
         card.addEventListener('click', (e) => {
             const checkbox = card.querySelector('input[type="checkbox"]');
-            if (e.target !== checkbox) {
-                checkbox.checked = !checkbox.checked;
-            }
+            if (e.target !== checkbox) checkbox.checked = !checkbox.checked;
             updateCapabilities();
         });
     });
@@ -180,14 +220,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCapabilities() {
         if (!capabilitiesList) return;
         capabilitiesList.innerHTML = '';
-
         const descriptions = {
             'email': '📧 Puede enviar y recibir emails',
             'search': '🔍 Puede buscar información en internet',
             'files': '📁 Puede crear, leer y modificar archivos',
             'calendar': '📅 Puede gestionar eventos y recordatorios'
         };
-
         let hasSelected = false;
         demoToolCards.forEach(card => {
             const checkbox = card.querySelector('input[type="checkbox"]');
@@ -200,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 capabilitiesList.appendChild(item);
             }
         });
-
         if (!hasSelected) {
             const item = document.createElement('div');
             item.className = 'capability disabled';
@@ -213,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // AGENT BUILDER INTERACTIVO (Rule 6)
     // ============================================
     
-    // Preview: nombre
     const agentNameInput = document.getElementById('agentName');
     const previewName = document.getElementById('previewName');
     if (agentNameInput && previewName) {
@@ -222,28 +258,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Preview: personalidad
     const personalityOptions = document.querySelectorAll('.personality-option');
     const previewPersonality = document.getElementById('previewPersonality');
-    
     personalityOptions.forEach(option => {
         option.addEventListener('click', () => {
             const radio = option.querySelector('input[type="radio"]');
             if (radio) radio.checked = true;
             personalityOptions.forEach(opt => opt.classList.remove('active'));
             option.classList.add('active');
-            
             const val = option.getAttribute('data-value');
             const name = option.querySelector('.personality-name').textContent;
             const icon = option.querySelector('.personality-icon').textContent;
-            
             if (previewPersonality) {
                 previewPersonality.innerHTML = `<span class="personality-badge ${val}">${icon} ${name}</span>`;
             }
         });
     });
     
-    // Preview: propósito
     const agentPurposeInput = document.getElementById('agentPurpose');
     const previewPurpose = document.getElementById('previewPurpose');
     if (agentPurposeInput && previewPurpose) {
@@ -252,18 +283,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Preview: herramientas (Rule 6 builder - scoped to .tools-checkbox-grid)
     const builderToolCheckboxes = document.querySelectorAll('.tools-checkbox-grid .tool-checkbox');
     const previewTools = document.getElementById('previewTools');
     
     builderToolCheckboxes.forEach(toolCheckbox => {
         const checkbox = toolCheckbox.querySelector('input[type="checkbox"]');
         if (!checkbox) return;
-        
         toolCheckbox.addEventListener('click', (e) => {
-            if (e.target !== checkbox) {
-                checkbox.checked = !checkbox.checked;
-            }
+            if (e.target !== checkbox) checkbox.checked = !checkbox.checked;
             toolCheckbox.classList.toggle('checked', checkbox.checked);
             updatePreviewTools();
         });
@@ -281,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (name) selected.push({ icon, name });
             }
         });
-        
         if (selected.length === 0) {
             previewTools.innerHTML = '<span class="tool-badge">❌ Sin herramientas</span>';
         } else {
@@ -302,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return tools;
     }
     
-    // Generar código
+    // Generate code
     const generateAgentBtn = document.getElementById('generateAgentBtn');
     const generatedCodeSection = document.getElementById('generatedCodeSection');
     const generatedCode = document.getElementById('generatedCode');
@@ -315,7 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const personality = document.querySelector('input[name="personality"]:checked')?.value || 'formal';
             const purpose = (document.getElementById('agentPurpose')?.value || '').trim() || 'Sin propósito definido';
             const tools = getSelectedBuilderTools();
-            
             const pythonCode = generatePythonCode(agentName, personality, purpose, tools);
             generatedCodeSection.style.display = 'block';
             generatedCode.innerHTML = `<code>${escapeHtml(pythonCode)}</code>`;
@@ -324,29 +349,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Tabs Python/JS en generador
+    // Tabs Python/JS
     document.querySelectorAll('.code-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.code-tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
             const lang = btn.getAttribute('data-lang');
             const agentName = (document.getElementById('agentName')?.value || 'MiAgenteIA').trim() || 'MiAgenteIA';
             const personality = document.querySelector('input[name="personality"]:checked')?.value || 'formal';
             const purpose = (document.getElementById('agentPurpose')?.value || '').trim() || 'Sin propósito definido';
             const tools = getSelectedBuilderTools();
-            
-            const code = lang === 'python' 
-                ? generatePythonCode(agentName, personality, purpose, tools) 
-                : generateJavaScriptCode(agentName, personality, purpose, tools);
-            
-            if (generatedCode) {
-                generatedCode.innerHTML = `<code>${escapeHtml(code)}</code>`;
-            }
+            const code = lang === 'python' ? generatePythonCode(agentName, personality, purpose, tools) : generateJavaScriptCode(agentName, personality, purpose, tools);
+            if (generatedCode) generatedCode.innerHTML = `<code>${escapeHtml(code)}</code>`;
         });
     });
     
-    // Copiar código generado
+    // Copy & download for generated code (standalone buttons below)
     if (copyCodeBtn) {
         copyCodeBtn.addEventListener('click', () => {
             const codeText = generatedCode?.querySelector('code')?.textContent || '';
@@ -356,29 +374,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 copyCodeBtn.textContent = '✓ ¡Copiado!';
                 copyCodeBtn.style.background = 'var(--color-success)';
                 setTimeout(() => { copyCodeBtn.textContent = orig; copyCodeBtn.style.background = ''; }, 2000);
-                showAlert('📋 Código copiado al portapapeles', 'success');
             });
         });
     }
     
-    // Descargar código generado
     if (downloadCodeBtn) {
         downloadCodeBtn.addEventListener('click', () => {
             const agentName = (document.getElementById('agentName')?.value || 'MiAgenteIA').trim() || 'MiAgenteIA';
             const codeText = generatedCode?.querySelector('code')?.textContent || '';
             if (!codeText) return;
-            
             const lang = document.querySelector('.code-tab-btn.active')?.getAttribute('data-lang') || 'python';
             const ext = lang === 'python' ? 'py' : 'js';
             const filename = `${agentName.replace(/\s+/g, '_')}.${ext}`;
-            
             const blob = new Blob([codeText], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             showAlert(`📥 Descargado como ${filename}`, 'success');
@@ -398,114 +410,91 @@ document.addEventListener('DOMContentLoaded', () => {
             settingsPanel.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
-
         closeSettings?.addEventListener('click', () => {
             settingsPanel.classList.remove('active');
             document.body.style.overflow = '';
         });
-
         document.addEventListener('click', (e) => {
-            if (settingsPanel.classList.contains('active') && 
-                !settingsPanel.contains(e.target) && 
-                !settingsWheel.contains(e.target)) {
+            if (settingsPanel.classList.contains('active') && !settingsPanel.contains(e.target) && !settingsWheel.contains(e.target)) {
                 settingsPanel.classList.remove('active');
                 document.body.style.overflow = '';
             }
         });
     }
 
-    // Theme buttons
+    // Theme
     document.querySelectorAll('.theme-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const theme = btn.getAttribute('data-theme');
-            if (theme === 'default') {
-                document.body.removeAttribute('data-theme');
-            } else {
-                document.body.setAttribute('data-theme', theme);
-            }
+            if (theme === 'default') document.body.removeAttribute('data-theme');
+            else document.body.setAttribute('data-theme', theme);
             localStorage.setItem('aiPillTheme', theme);
-            showAlert(`🎨 Tema "${btn.textContent.trim()}" aplicado`, 'success');
+            showAlert(`🎨 Tema de código "${btn.textContent.trim()}" aplicado`, 'success');
         });
     });
 
-    // Font buttons
+    // Font
     document.querySelectorAll('.font-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const font = btn.getAttribute('data-font');
-            if (font === 'default') {
-                document.body.removeAttribute('data-font');
-            } else {
-                document.body.setAttribute('data-font', font);
-            }
+            if (font === 'default') document.body.removeAttribute('data-font');
+            else document.body.setAttribute('data-font', font);
             localStorage.setItem('aiPillFont', font);
             showAlert(`🔤 Fuente "${btn.textContent.trim()}" aplicada`, 'success');
         });
     });
 
-    // Size buttons
+    // Size
     document.querySelectorAll('.size-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const size = btn.getAttribute('data-size');
-            if (size === 'normal') {
-                document.body.removeAttribute('data-size');
-            } else {
-                document.body.setAttribute('data-size', size);
-            }
+            if (size === 'normal') document.body.removeAttribute('data-size');
+            else document.body.setAttribute('data-size', size);
             localStorage.setItem('aiPillSize', size);
             showAlert(`🔍 Tamaño "${btn.textContent.trim()}" aplicado`, 'success');
         });
     });
 
-    // Reset settings
+    // Reset
     if (resetSettingsBtn) {
         resetSettingsBtn.addEventListener('click', () => {
             localStorage.removeItem('aiPillTheme');
             localStorage.removeItem('aiPillFont');
             localStorage.removeItem('aiPillSize');
-            
             document.body.removeAttribute('data-theme');
             document.body.removeAttribute('data-font');
             document.body.removeAttribute('data-size');
-            
             document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.theme-btn[data-theme="default"]')?.classList.add('active');
             document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.font-btn[data-font="default"]')?.classList.add('active');
             document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.size-btn[data-size="normal"]')?.classList.add('active');
-            
             showAlert('↺ Ajustes restablecidos', 'success');
         });
     }
 
-    // Load saved settings
+    // Load saved
     const savedTheme = localStorage.getItem('aiPillTheme');
     const savedFont = localStorage.getItem('aiPillFont');
     const savedSize = localStorage.getItem('aiPillSize');
-    
     if (savedTheme && savedTheme !== 'default') {
         document.body.setAttribute('data-theme', savedTheme);
-        document.querySelectorAll('.theme-btn').forEach(b => {
-            b.classList.toggle('active', b.getAttribute('data-theme') === savedTheme);
-        });
+        document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-theme') === savedTheme));
     }
     if (savedFont && savedFont !== 'default') {
         document.body.setAttribute('data-font', savedFont);
-        document.querySelectorAll('.font-btn').forEach(b => {
-            b.classList.toggle('active', b.getAttribute('data-font') === savedFont);
-        });
+        document.querySelectorAll('.font-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-font') === savedFont));
     }
     if (savedSize && savedSize !== 'normal') {
         document.body.setAttribute('data-size', savedSize);
-        document.querySelectorAll('.size-btn').forEach(b => {
-            b.classList.toggle('active', b.getAttribute('data-size') === savedSize);
-        });
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-size') === savedSize));
     }
 
     // ============================================
@@ -524,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(actualizarRelojBilbao, 1000);
 
     // ============================================
-    // TABS (code examples in rules)
+    // TABS (code examples)
     // ============================================
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -532,11 +521,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!tabGroup) return;
             tabGroup.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            
             const contentGroup = this.closest('.code-example')?.querySelector('.tab-content');
             if (!contentGroup) return;
             contentGroup.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-            
             const tabId = this.getAttribute('data-tab');
             const target = document.getElementById(tabId);
             if (target) target.classList.add('active');
@@ -566,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================
-// UTILITY: Escape HTML for safe insertion
+// UTILITIES
 // ============================================
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -574,50 +561,18 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// ============================================
-// CODE GENERATORS
-// ============================================
 function generatePythonCode(agentName, personality, purpose, tools) {
     const prompts = {
         formal: 'Eres un asistente profesional y formal. Responde de manera precisa y técnica.',
         casual: 'Eres un asistente amigable y casual. Responde de manera relajada y cercana.',
-        technical: 'Eres un asistente técnico experto. Responde con detalle y precisión, incluyendo código cuando sea necesario.',
-        creative: 'Eres un asistente creativo e innovador. Responde con ideas originales y enfoques únicos.'
+        technical: 'Eres un asistente técnico experto. Responde con detalle y precisión.',
+        creative: 'Eres un asistente creativo e innovador. Responde con ideas originales.'
     };
-    
     const toolImports = new Set();
     const toolDefs = [];
-    
-    if (tools.includes('Enviar emails')) {
-        toolImports.add('from langchain.tools import Tool');
-        toolImports.add('import smtplib');
-        toolDefs.push(`
-def send_email(recipient, subject, body):
-    """Envía un email al destinatario especificado"""
-    # Implementación real con SMTP
-    return f"Email enviado a {recipient}"`);
-    }
-    
-    if (tools.includes('Buscar en web')) {
-        toolImports.add('from langchain.utilities import GoogleSearchAPIWrapper');
-        toolDefs.push(`
-search = GoogleSearchAPIWrapper()`);
-    }
-    
-    if (tools.includes('Gestionar archivos')) {
-        toolDefs.push(`
-def read_file(filename):
-    """Lee el contenido de un archivo"""
-    with open(filename, 'r') as f:
-        return f.read()
-
-def write_file(filename, content):
-    """Escribe contenido en un archivo"""
-    with open(filename, 'w') as f:
-        f.write(content)
-    return f"Archivo {filename} guardado"`);
-    }
-    
+    if (tools.includes('Enviar emails')) { toolImports.add('import smtplib'); toolDefs.push(`\ndef send_email(recipient, subject, body):\n    """Envía un email"""\n    return f"Email enviado a {recipient}"`); }
+    if (tools.includes('Buscar en web')) { toolImports.add('from langchain.utilities import GoogleSearchAPIWrapper'); toolDefs.push(`\nsearch = GoogleSearchAPIWrapper()`); }
+    if (tools.includes('Gestionar archivos')) { toolDefs.push(`\ndef read_file(filename):\n    with open(filename, 'r') as f:\n        return f.read()\n\ndef write_file(filename, content):\n    with open(filename, 'w') as f:\n        f.write(content)\n    return f"Archivo {filename} guardado"`); }
     const toolLines = tools.map(tool => {
         if (tool === 'Enviar emails') return '    Tool(name="SendEmail", func=send_email, description="Envía emails")';
         if (tool === 'Buscar en web') return '    Tool(name="Search", func=search.run, description="Busca en internet")';
@@ -627,69 +582,7 @@ def write_file(filename, content):
         if (tool === 'Base de datos') return '    Tool(name="Database", func=lambda x: "Query", description="Base de datos")';
         return '';
     }).filter(Boolean);
-    
-    return `# ==================================================
-# Agente de IA: ${agentName}
-# ==================================================
-# Propósito: ${purpose}
-# Personalidad: ${personality}
-# Herramientas: ${tools.join(', ') || 'Ninguna'}
-# ==================================================
-
-${[...toolImports].join('\n')}
-
-from langchain.chat_models import ChatOpenAI
-from langchain.agents import initialize_agent, AgentType
-from langchain.memory import ConversationBufferMemory
-${toolDefs.join('\n')}
-
-# Configurar el modelo
-llm = ChatOpenAI(temperature=0.7, model_name="gpt-4")
-
-# Configurar memoria
-memory = ConversationBufferMemory(
-    memory_key="chat_history",
-    return_messages=True
-)
-
-# Personalidad: ${personality}
-SYSTEM_PROMPT = """
-${prompts[personality]}
-
-Propósito: ${purpose}
-"""
-
-# Herramientas
-tools = [
-${toolLines.join(',\n')}
-]
-
-# Crear el agente
-agent = initialize_agent(
-    tools=tools,
-    llm=llm,
-    agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
-    verbose=True,
-    memory=memory,
-    handle_parsing_errors=True
-)
-
-print(f"✅ Agente '${agentName}' iniciado")
-print(f"🛠️  Herramientas: ${tools.length} disponibles")
-
-# Uso
-if __name__ == "__main__":
-    while True:
-        user_input = input("\\n👤 Tú: ")
-        if user_input.lower() in ['salir', 'exit', 'quit']:
-            print("👋 ¡Hasta luego!")
-            break
-        try:
-            response = agent.run(user_input)
-            print(f"🤖 ${agentName}: {response}")
-        except Exception as e:
-            print(f"❌ Error: {e}")
-`;
+    return `# Agente: ${agentName}\n# Propósito: ${purpose}\n# Personalidad: ${personality}\n\nfrom langchain.chat_models import ChatOpenAI\nfrom langchain.agents import initialize_agent, AgentType\nfrom langchain.memory import ConversationBufferMemory\nfrom langchain.tools import Tool\n${[...toolImports].join('\n')}\n${toolDefs.join('\n')}\n\nllm = ChatOpenAI(temperature=0.7, model_name="gpt-4")\n\nmemory = ConversationBufferMemory(\n    memory_key="chat_history",\n    return_messages=True\n)\n\nSYSTEM_PROMPT = """\n${prompts[personality]}\nPropósito: ${purpose}\n"""\n\ntools = [\n${toolLines.join(',\n')}\n]\n\nagent = initialize_agent(\n    tools=tools, llm=llm,\n    agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,\n    verbose=True, memory=memory\n)\n\nprint(f"✅ Agente '${agentName}' iniciado")\n\nif __name__ == "__main__":\n    while True:\n        user_input = input("\\n👤 Tú: ")\n        if user_input.lower() in ['salir', 'exit']:\n            print("👋 ¡Hasta luego!")\n            break\n        response = agent.run(user_input)\n        print(f"🤖 ${agentName}: {response}")\n`;
 }
 
 function generateJavaScriptCode(agentName, personality, purpose, tools) {
@@ -699,93 +592,25 @@ function generateJavaScriptCode(agentName, personality, purpose, tools) {
         technical: 'Eres un asistente técnico experto.',
         creative: 'Eres un asistente creativo e innovador.'
     };
-    
     const toolLines = tools.map(tool => {
         const safeName = tool.replace(/\s+/g, '');
         return `    { name: "${safeName}", description: "${tool}", func: async (input) => \`Resultado: \${input}\` }`;
     });
-    
-    return `// ==================================================
-// Agente de IA: ${agentName}
-// ==================================================
-// Propósito: ${purpose}
-// Personalidad: ${personality}
-// Herramientas: ${tools.join(', ') || 'Ninguna'}
-// ==================================================
-
-const { ChatOpenAI } = require('langchain/chat_models/openai');
-const { BufferMemory } = require('langchain/memory');
-const { initializeAgentExecutorWithOptions } = require('langchain/agents');
-
-const model = new ChatOpenAI({ temperature: 0.7, modelName: "gpt-4" });
-
-const memory = new BufferMemory({
-    memoryKey: "chat_history",
-    returnMessages: true
-});
-
-const SYSTEM_PROMPT = \`
-${prompts[personality]}
-Propósito: ${purpose}
-\`;
-
-const tools = [
-${toolLines.join(',\n')}
-];
-
-const agent = await initializeAgentExecutorWithOptions(
-    tools, model,
-    { agentType: "chat-conversational-react-description", verbose: true, memory }
-);
-
-console.log(\`✅ Agente '${agentName}' iniciado\`);
-console.log(\`🛠️  Herramientas: ${tools.length} disponibles\`);
-
-async function runAgent() {
-    const prompts = ["Hola, ¿qué puedes hacer?", "Explícame tu propósito"];
-    for (const prompt of prompts) {
-        console.log(\`\\n👤 Tú: \${prompt}\`);
-        const result = await agent.call({ input: prompt });
-        console.log(\`🤖 ${agentName}: \${result.output}\`);
-    }
+    return `// Agente: ${agentName}\n// Propósito: ${purpose}\n// Personalidad: ${personality}\n\nconst { ChatOpenAI } = require('langchain/chat_models/openai');\nconst { BufferMemory } = require('langchain/memory');\nconst { initializeAgentExecutorWithOptions } = require('langchain/agents');\n\nconst model = new ChatOpenAI({ temperature: 0.7, modelName: "gpt-4" });\nconst memory = new BufferMemory({ memoryKey: "chat_history", returnMessages: true });\n\nconst SYSTEM_PROMPT = \`\n${prompts[personality]}\nPropósito: ${purpose}\n\`;\n\nconst tools = [\n${toolLines.join(',\n')}\n];\n\nconst agent = await initializeAgentExecutorWithOptions(\n    tools, model,\n    { agentType: "chat-conversational-react-description", verbose: true, memory }\n);\n\nconsole.log(\`✅ Agente '${agentName}' iniciado\`);\n\nasync function runAgent() {\n    const prompts = ["Hola, ¿qué puedes hacer?"];\n    for (const prompt of prompts) {\n        console.log(\`\\n👤 Tú: \${prompt}\`);\n        const result = await agent.call({ input: prompt });\n        console.log(\`🤖 ${agentName}: \${result.output}\`);\n    }\n}\n\nrunAgent().catch(console.error);\n`;
 }
 
-runAgent().catch(console.error);
-`;
-}
-
-// ============================================
-// ALERT TOAST
-// ============================================
 function showAlert(message, type) {
     document.querySelectorAll('.alert-toast').forEach(a => a.remove());
-    
     const alertDiv = document.createElement('div');
     alertDiv.className = 'alert-toast';
-    alertDiv.style.cssText = `
-        position: fixed; top: 20px; right: 20px;
-        padding: 12px 24px; border-radius: 8px;
-        color: white; font-weight: bold;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        z-index: 10000; animation: slideIn 0.3s ease;
-        max-width: 90vw; word-break: break-word;
-    `;
-    
+    alertDiv.style.cssText = `position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:8px;color:white;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:10000;animation:slideIn 0.3s ease;max-width:90vw;word-break:break-word;`;
     const colors = { danger: '#ef4444', success: '#10b981', warning: '#f59e0b' };
     alertDiv.style.background = colors[type] || '#10b981';
     alertDiv.textContent = message;
     document.body.appendChild(alertDiv);
-    
-    setTimeout(() => {
-        alertDiv.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => alertDiv.remove(), 300);
-    }, 2500);
+    setTimeout(() => { alertDiv.style.animation = 'slideOut 0.3s ease'; setTimeout(() => alertDiv.remove(), 300); }, 2500);
 }
 
-// Inject animation keyframes
 const animStyle = document.createElement('style');
-animStyle.textContent = `
-    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
-`;
+animStyle.textContent = `@keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(400px);opacity:0}}`;
 document.head.appendChild(animStyle);
